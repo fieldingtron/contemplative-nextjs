@@ -1,10 +1,22 @@
 import Layout from '../components/Layout'
+import Event from '../components/Event'
 import Link from 'next/link'
+import moment from 'moment'
 import Image from 'next/image'
-import profilePic from '../public/img/blue-mandala.png'
 import sunsetPic from '../public/img/sunset-clouds.jpg'
 
-export default function Home() {
+export default function Events({ posts }) {
+  console.log({ posts })
+  const d = new Date()
+  const date = moment(d).format('YYYY-MM-DD')
+  const pastEvents = posts.filter(
+    (post) => post.requiredData.date <= date
+  ).length
+
+  const upcomingEvents = posts.filter(
+    (post) => post.requiredData.date > date
+  ).length
+
   return (
     <Layout>
       <main>
@@ -17,41 +29,69 @@ export default function Home() {
 
         <div className='container py-3'>
           <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
-            Past Events
+            {pastEvents} Past Events
           </h1>
-          <div className='row py-2'>
-            <div className='col-md-4 text-center p-1'>
-              <Image
-                alt='Retreat Event 1'
-                src={profilePic}
-                // layout='fill'\
-                height={200}
-                width={200}
-                objectFit='cover'
-                objectPosition='center'
-                quality={100}
-                className='rounded-circle img-fluid'
-              />
-            </div>
-            <div className='col-md-8 d-flex flex-column justify-content-center align-items-center align-items-md-start p-4'>
-              <h4 className='text-start'>
-                Divine Presence with Fr. Bill Sheehan, OMI
-              </h4>
-              <h4 className='text-start'>
-                Experiencing Incarnation in Your Life
-              </h4>
-              <h4 className='text-start'>
-                Centering Prayer Weekend Retreat
-                <br />
-              </h4>
-              <h4 className='text-start'>
-                April 29 - May 1, 2022
-                <br />
-              </h4>
-            </div>
-          </div>
+
+          {posts
+            .filter((post) => post.requiredData.date <= date)
+            .map((post) => (
+              <div key={post.id}>
+                <Event post={post} />
+              </div>
+            ))}
         </div>
       </main>
     </Layout>
   )
+}
+
+export async function getStaticProps() {
+  const { API_URL } = process.env
+  const response = await fetch(`${API_URL}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `
+            query MyQuery {
+                posts(where:{categoryName:"events"}) {
+                  nodes {
+                    id
+                    slug
+                    title
+                    excerpt
+                    categories {
+                        nodes {
+                          name
+                        }
+                      }
+                    featuredImage {
+                      node {
+                        sourceUrl
+                      }
+                    }
+                    requiredData {
+                      date
+                      location  
+                      presenter
+                      subtitle
+                      subtitle2
+                      subtitle3
+                      type
+                    }
+                  }
+                }
+              }              
+                `,
+    }),
+  })
+
+  const json = await response.json()
+
+  return {
+    props: {
+      posts: json.data.posts.nodes,
+    },
+  }
 }
