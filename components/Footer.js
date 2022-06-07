@@ -29,16 +29,24 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <a href='/about.html'>Articles</a>
+                  <Link href='/articles'>
+                    <a>Articles</a>
+                  </Link>
                 </li>
                 <li>
-                  <a href='/cart.html'>Direction</a>
+                  <Link href='/direction'>
+                    <a>Direction</a>
+                  </Link>
                 </li>
                 <li>
-                  <a href='/contact.html'>Friends</a>
+                  <Link href='/friends'>
+                    <a>Friends</a>
+                  </Link>
                 </li>
                 <li>
-                  <a href='#'>Contact</a>
+                  <Link href='/contact'>
+                    <a>Contact</a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -49,13 +57,11 @@ export default function Footer() {
         <div className='container'>
           <div className='row row-cols-1 row-cols-md-3'>
             <div className='col text-center'>
-              <a
-                id='footerhomelink'
-                className='link-secondary d-block my-2'
-                href='/index.html'
-              >
-                © 2022 Contemplative Path
-              </a>
+              <Link href='/'>
+                <a id='footerhomelink' className='link-secondary d-block my-2'>
+                  © 2022 Contemplative Path
+                </a>
+              </Link>
             </div>
             <div className='col'>
               <ul className='list-inline text-center my-2'>
@@ -70,14 +76,9 @@ export default function Footer() {
                 className='list-inline text-center text-success my-2'
               >
                 <li className='list-inline-item'>
-                  <a className='link-secondary footlink' href='/privacy.html'>
-                    Privacy Policy
-                  </a>
-                </li>
-                <li className='list-inline-item'>
-                  <a className='link-secondary footlink' href='/terms.html'>
-                    Terms of Use
-                  </a>
+                  <Link href='/privacy'>
+                    <a className='link-secondary footlink'>Privacy Policy</a>
+                  </Link>
                 </li>
               </ul>
             </div>

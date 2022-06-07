@@ -2,23 +2,13 @@ import Layout from '../../components/Layout'
 import moment from 'moment'
 import Image from 'next/image'
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
-import EventSummary from '../../components/EventSummary'
-
-export default function Events({ events }) {
+import DirectionSummary from '../../components/DirectionSummary'
+export default function Direction({ data }) {
   // console.log('data received')
   // console.log({ events })
   //console.log('first event received')
-  //const event = events[0]
-  //console.log(event)
-  const d = new Date()
-  const date = moment(d).format('YYYY-MM-DD')
-  const pastEvents = events.filter(
-    (event) => event.node.requiredData.date <= date
-  ).length
-
-  const upcomingEvents = events.filter(
-    (event) => event.node.requiredData.date > date
-  ).length
+  //const dddd = data[0]
+  //console.log(dddd)
 
   return (
     <Layout>
@@ -32,19 +22,14 @@ export default function Events({ events }) {
 
         <div className='container py-3'>
           <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
-            {pastEvents} Past Events
+            Direction
           </h1>
 
-          {events
-            .filter((event) => event.node.requiredData.date <= date)
-            .map((event) => (
-              <EventSummary
-                event={event.node}
-                key={event.node.id}
-                value={event.node.id}
-              />
-              //value={number}
+          <ul>
+            {data.map((data) => (
+              <DirectionSummary key={data.node.id} data={data} />
             ))}
+          </ul>
         </div>
       </main>
     </Layout>
@@ -60,34 +45,30 @@ export async function getStaticProps() {
     },
     body: JSON.stringify({
       query: `
-      query eventz {
-        events {
+
+
+      query datazz {
+        direction {
           edges {
             node {
-              requiredData {
-                subtitle
-                subtitle2
-                subtitle3
-                type
-                date
-                location
-                presenter
-                registerurl
-              }
               id
+              slug
               uri
               title
-              date
+              excerpt
               featuredImage {
                 node {
-                  sourceUrl
                   altText
+                  sourceUrl
                 }
               }
             }
           }
         }
-      }            
+      }
+
+      
+                 
                 `,
     }),
   })
@@ -100,7 +81,7 @@ export async function getStaticProps() {
 
   return {
     props: {
-      events: json.data.events.edges,
+      data: json.data.direction.edges,
     },
   }
 }

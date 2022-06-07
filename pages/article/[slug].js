@@ -1,10 +1,13 @@
 import Layout from '../../components/Layout'
 import Image from 'next/image'
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
+import moment from 'moment'
 
-export default function Evt({ event }) {
-  //console.log(' eventz received')
-  //console.log(event)
+export default function Art({ article }) {
+  //console.log(' articlez received')
+  //console.log(article)
+
+  const { API_URL } = process.env
 
   return (
     <Layout>
@@ -18,38 +21,16 @@ export default function Evt({ event }) {
 
         <div className='container py-3 position-relative'>
           <h3 className='text-center hero-text text-black-50'>
-            <span style={{ color: 'rgb(61, 89, 122)' }}>{event.title}</span>
+            <span style={{ color: 'rgb(61, 89, 122)' }}>{article.title}</span>
             <br />
           </h3>
-          <div className='row py-3'>
-            <div className='col-md-4 text-center p-1'>
-              <Image
-                alt={event.title}
-                src={event.featuredImage.node.sourceUrl}
-                // layout='fill'\
-                height={200}
-                width={200}
-                objectFit='cover'
-                objectPosition='center'
-                quality={100}
-                className='rounded-circle img-fluid'
-              />
-            </div>
-            <div className='col-md-8 d-flex flex-column justify-content-center align-items-center align-items-md-start p-4'>
-              <h4 className='text-start'>{event.title}</h4>
-              {event.requiredData.subtitle && (
-                <h4 className='text-start'>{event.requiredData.subtitle}</h4>
-              )}
-              {event.requiredData.subtitle2 && (
-                <h4 className='text-start'>{event.requiredData.subtitle2}</h4>
-              )}
-              {event.requiredData.subtitle3 && (
-                <h4 className='text-start'>{event.requiredData.subtitle3}</h4>
-              )}
-            </div>
-          </div>
+
+          <h6 className='mx-sm-2 mx-md-3 fs-4 my-2 text-center'>
+            Date: {moment(article.date).format('MMM Do YYYY')}
+          </h6>
+
           <div
-            dangerouslySetInnerHTML={{ __html: event.content }}
+            dangerouslySetInnerHTML={{ __html: article.content }}
             className='fs-5 my-2 mx-sm-2 mx-md-3'
           />
         </div>
@@ -71,18 +52,12 @@ export async function getStaticProps({ params }) {
       query: `
 
       {
-        event(id: "${params.slug}", idType: SLUG) {
+        article(id: "${params.slug}", idType: SLUG) {
           id
           slug
           title
           uri
-          requiredData {
-            subtitle
-            subtitle2
-            subtitle3
-            presenter
-            registerurl
-          }
+          date
           content
           featuredImage {
             node {
@@ -101,11 +76,11 @@ export async function getStaticProps({ params }) {
   //console.log('data here')
   //console.log(json.data)
   // console.log('edges here')
-  // console.log(json.data.events.edges)
+  // console.log(json.data.articles.edges)
 
   return {
     props: {
-      event: json.data.event,
+      article: json.data.article,
     },
   }
 }
@@ -119,8 +94,8 @@ export async function getStaticPaths() {
     },
     body: JSON.stringify({
       query: `
-      query eventz {
-        events {
+      query articlez {
+        articles {
           edges {
             node {
               uri
@@ -137,12 +112,12 @@ export async function getStaticPaths() {
 
   const posts = await response.json()
   console.log('data here')
-  console.log(posts.data.events.edges)
+  console.log(posts.data.articles.edges)
   // console.log('edges here')
-  // console.log(json.data.events.edges)
+  // console.log(json.data.articles.edges)
 
   // Get the paths we want to pre-render based on posts
-  const paths = posts.data.events.edges.map((post) => ({
+  const paths = posts.data.articles.edges.map((post) => ({
     params: { slug: post.node.slug },
   }))
 
@@ -152,7 +127,7 @@ export async function getStaticPaths() {
 
   return {
     props: {
-      events: json.data.events.edges,
+      articles: json.data.articles.edges,
     },
   }
 }
