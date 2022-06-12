@@ -14,6 +14,7 @@ export default function Home() {
           layout='fill'
           objectFit='center'
           objectPosition='center'
+          priority
         />
         <div
           id='centerHero'

@@ -55,7 +55,7 @@ export default function Footer() {
       </div>
       <div id='footer-bottom' className='py-2'>
         <div className='container'>
-          <div className='row row-cols-1 row-cols-md-3'>
+          <div className='row row-cols-1 row-cols-md-2'>
             <div className='col text-center'>
               <Link href='/'>
                 <a id='footerhomelink' className='link-secondary d-block my-2'>
@@ -63,13 +63,13 @@ export default function Footer() {
                 </a>
               </Link>
             </div>
-            <div className='col'>
+            {/* <div className='col'>
               <ul className='list-inline text-center my-2'>
                 <li className='list-inline-item'>
                   <div className='bs-icon-circle bs-icon-semi-white'></div>
                 </li>
               </ul>
-            </div>
+            </div> */}
             <div className='col'>
               <ul
                 id='terms-list'

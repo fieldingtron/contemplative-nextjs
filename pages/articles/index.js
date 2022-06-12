@@ -61,7 +61,7 @@ export async function getStaticProps() {
           }
         }
       }            
-                `,
+      `,
     }),
   })
 

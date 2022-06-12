@@ -1,11 +1,14 @@
-import React from 'react'
 import Image from 'next/image'
 import Layout from '../components/Layout'
 import sunsetPic from '../public/img/sunset-clouds.jpg'
 import Link from 'next/link'
+import axios from 'axios'
+import csvtojson from 'csvtojson'
 
 export default function friends({ links }) {
-  console.log(links)
+  const SSKEY = process.env.SPREADSHEET_KEY
+  //console.log(links)
+
   return (
     <Layout>
       <main>
@@ -16,23 +19,18 @@ export default function friends({ links }) {
           layout='fill'
           objectFit='center'
           objectPosition='center'
+          priority
         />
 
-        <div key='main' className='container py-3 position-relative onTop100'>
+        <div key='main' className='container py-3 position-relative'>
           <h1 className='text-center hero-text text-black-50 py-3'>Friends</h1>
           <ul>
-            <li className='fs-4'>
-              <a href='#'>Website X</a>&nbsp; - what this website is about lorem
-              etc
-            </li>
-          </ul>
-          <ul>
             {links.map((link) => (
-              <li className='fs-4' key={link.url}>
-                <Link href={link.url} target='_blank'>
-                  <a> {link.name}</a>
+              <li className='fs-4' key={link.Link}>
+                <Link href={link.Link} target='_blank'>
+                  <a> {link.Title}</a>
                 </Link>
-                - {link.description}
+                - {link.Comments}
               </li>
             ))}
           </ul>
@@ -51,39 +49,30 @@ export default function friends({ links }) {
 }
 
 export async function getStaticProps() {
-  const { API_URL } = process.env
-  const response = await fetch(`${API_URL}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `                        
-                query cf($id: ID = "friends") {
-                  post(id: $id, idType: SLUG) {
-                    slug
-                    title
-                    friendsLinks {
-                      links {
-                        description
-                        detail
-                        fieldGroupName
-                        name
-                        url
-                      }
-                    }
-                  }
-                }
-                                  
-                `,
-    }),
-  })
+  let csvURL =
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSK7CO9nJoOT_lakCTKGrC4uhANqFazyH8mLAqdL66FGSKj_p24Xj7yp4dA75apB55xLwsovTDuqQw2/pub?gid=1966949909&single=true&output=csv'
 
-  const json = await response.json()
+  const getLinks = async () => {
+    try {
+      return await axios.get(csvURL)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const linkInfo = async () => {
+    const links = await getLinks()
+    if (links.data) {
+      const jsonArray = await csvtojson().fromString(links.data)
+      return jsonArray
+    }
+  }
+
+  const linkz = await linkInfo()
 
   return {
     props: {
-      links: json.data.post.friendsLinks.links,
+      links: linkz,
     },
   }
 }

@@ -84,7 +84,7 @@ main {
 }
 
 #footer-top {
-  padding: 2rem 0;
+  padding-top: 1rem;
 }
 
 .overlayz {
@@ -118,3 +118,9 @@ a.noLink {
   max-width: 80vw;
   height: auto;
 }
+
+.card {
+  /*background-color: var(--calmBlue);*/
+  background-color: rgba(255,255,255,0.2);
+}
+

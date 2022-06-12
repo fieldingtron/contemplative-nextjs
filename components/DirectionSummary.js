@@ -4,7 +4,7 @@ import Link from 'next/link'
 import profilePic from '../public/img/blue-mandala.png'
 
 export default function DirectionSummary({ data }) {
-  console.log('heere we go IAN xoxo')
+  console.log('data')
   console.log({ data })
   return (
     <div className='row py-2'>
