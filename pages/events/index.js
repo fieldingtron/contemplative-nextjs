@@ -3,6 +3,7 @@ import moment from 'moment'
 import Image from 'next/image'
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import EventSummary from '../../components/EventSummary'
+import { NextSeo } from 'next-seo'
 
 export default function Events({ events }) {
   // console.log('data received')
@@ -22,12 +23,14 @@ export default function Events({ events }) {
 
   return (
     <Layout>
+      <NextSeo title='Upcoming and Past Events' />
       <main>
         <Image
           src={sunsetPic}
           className='overlayz'
           alt='Sunset Cloud Background'
           layout='fill'
+          priority
         />
 
         <div className='container py-3'>

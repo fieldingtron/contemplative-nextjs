@@ -4,6 +4,7 @@ import sunsetPic from '../public/img/sunset-clouds.jpg'
 import Link from 'next/link'
 import axios from 'axios'
 import csvtojson from 'csvtojson'
+import { NextSeo } from 'next-seo'
 
 export default function friends({ links }) {
   const SSKEY = process.env.SPREADSHEET_KEY
@@ -11,6 +12,7 @@ export default function friends({ links }) {
 
   return (
     <Layout>
+      <NextSeo title='List of Friends' />
       <main>
         <Image
           src={sunsetPic}

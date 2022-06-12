@@ -1,6 +1,7 @@
 import Layout from '../../components/Layout'
 import Image from 'next/image'
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
+import { NextSeo } from 'next-seo'
 
 export default function Evt({ event }) {
   //console.log(' eventz received')
@@ -8,12 +9,14 @@ export default function Evt({ event }) {
 
   return (
     <Layout>
+      <NextSeo title={event.title} />
       <main>
         <Image
           src={sunsetPic}
           className='overlayz'
           alt='Sunset Cloud Background'
           layout='fill'
+          priority
         />
 
         <div className='container py-3 position-relative'>

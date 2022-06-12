@@ -8,6 +8,7 @@ import { FormData } from 'formdata-node'
 import axios from 'axios'
 import EmailSent from '../components/EmailSent'
 import { useForm } from 'react-hook-form'
+import { NextSeo } from 'next-seo'
 
 export default function ContactPage() {
   const [name, setName] = useState('')
@@ -42,6 +43,7 @@ export default function ContactPage() {
 
   return (
     <Layout>
+      <NextSeo title='Contact Page' />
       <main>
         <Image
           src={sunsetPic}

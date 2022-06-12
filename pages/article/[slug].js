@@ -2,6 +2,7 @@ import Layout from '../../components/Layout'
 import Image from 'next/image'
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import moment from 'moment'
+import { NextSeo } from 'next-seo'
 
 export default function Art({ article }) {
   //console.log(' articlez received')
@@ -11,6 +12,7 @@ export default function Art({ article }) {
 
   return (
     <Layout>
+      <NextSeo title={article.title} />
       <main>
         <Image
           src={sunsetPic}

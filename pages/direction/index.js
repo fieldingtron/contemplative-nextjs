@@ -3,6 +3,7 @@ import moment from 'moment'
 import Image from 'next/image'
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import DirectionSummary from '../../components/DirectionSummary'
+import { NextSeo } from 'next-seo'
 export default function Direction({ data }) {
   // console.log('data received')
   // console.log({ events })
@@ -12,12 +13,14 @@ export default function Direction({ data }) {
 
   return (
     <Layout>
+      <NextSeo title='Leadership Contemplative path' />
       <main>
         <Image
           src={sunsetPic}
           className='overlayz'
           alt='Sunset Cloud Background'
           layout='fill'
+          priority
         />
 
         <div className='container py-3'>

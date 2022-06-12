@@ -2,10 +2,12 @@ import Layout from '../components/Layout'
 import Link from 'next/link'
 import cloudPic from '../public/img/blue-clouds.jpeg'
 import Image from 'next/image'
+import { NextSeo } from 'next-seo'
 
 export default function Home() {
   return (
     <Layout>
+      <NextSeo description='Online and In Person Retreats' />
       <main className='d-flex justify-content-center align-items-center'>
         <Image
           src={cloudPic}

@@ -2,6 +2,7 @@ import Layout from '../../components/Layout'
 import Image from 'next/image'
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import ArticleSummary from '../../components/ArticleSummary'
+import { NextSeo } from 'next-seo'
 
 export default function Articles({ articles }) {
   // console.log('data received')
@@ -11,6 +12,7 @@ export default function Articles({ articles }) {
   //console.log(event)
   return (
     <Layout>
+      <NextSeo title='List of Articles' />
       <main>
         <Image
           src={sunsetPic}
