@@ -1,6 +1,6 @@
 import Layout from '../../components/Layout'
 import { NextSeo } from 'next-seo'
-import CloudBackgroundOrange from '../components/CloudBackgroundOrange'
+import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 import Image from 'next/image'
 
 export default function Evt({ event }) {
