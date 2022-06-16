@@ -1,7 +1,6 @@
 import Layout from '../components/Layout'
 import Link from 'next/link'
-import cloudPic from '../public/img/blue-clouds.jpeg'
-import Image from 'next/image'
+import CloudBackgroundBlue from '../components/CloudBackgroundBlue'
 import { NextSeo } from 'next-seo'
 
 export default function Home() {
@@ -9,15 +8,7 @@ export default function Home() {
     <Layout>
       <NextSeo description='Online and In Person Retreats' />
       <main className='d-flex justify-content-center align-items-center'>
-        <Image
-          src={cloudPic}
-          className='overlayz overlayz-dark'
-          alt='Blue Cloud Background'
-          layout='fill'
-          objectFit='center'
-          objectPosition='center'
-          priority
-        />
+        <CloudBackgroundBlue />
         <div
           id='centerHero'
           className='d-flex flex-column justify-content-between align-items-center py-3 py-md-5 my-2 my-lg-4 mh-50 class animate__animated animate__bounce'

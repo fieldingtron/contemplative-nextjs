@@ -1,7 +1,7 @@
 import Layout from '../../components/Layout'
-import Image from 'next/image'
-import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import { NextSeo } from 'next-seo'
+import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
+import Image from 'next/image'
 
 export default function Direction({ data }) {
   //console.log(' articlez received')
@@ -11,12 +11,7 @@ export default function Direction({ data }) {
     <Layout>
       <NextSeo title={data.title} />
       <main>
-        <Image
-          src={sunsetPic}
-          className='overlayz'
-          alt='Sunset Cloud Background'
-          layout='fill'
-        />
+        <CloudBackgroundOrange />
 
         <div className='container py-3 position-relative'>
           <h3 className='text-center hero-text text-black-50'>{data.title}</h3>

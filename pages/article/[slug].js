@@ -1,8 +1,8 @@
 import Layout from '../../components/Layout'
-import Image from 'next/image'
-import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import moment from 'moment'
 import { NextSeo } from 'next-seo'
+import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
+import Image from 'next/image'
 
 export default function Art({ article }) {
   //console.log(' articlez received')
@@ -14,12 +14,7 @@ export default function Art({ article }) {
     <Layout>
       <NextSeo title={article.title} />
       <main>
-        <Image
-          src={sunsetPic}
-          className='overlayz'
-          alt='Sunset Cloud Background'
-          layout='fill'
-        />
+        <CloudBackgroundOrange />
 
         <div className='container py-3 position-relative'>
           <h3 className='text-center hero-text text-black-50'>
@@ -30,6 +25,19 @@ export default function Art({ article }) {
           <h6 className='mx-sm-2 mx-md-3 fs-4 my-2 text-center'>
             Date: {moment(article.date).format('MMM Do YYYY')}
           </h6>
+          <div className='d-flex justify-content-center align-items-center'>
+            <Image
+              alt={article.featuredImage.node.altText}
+              src={article.featuredImage.node.sourceUrl}
+              // layout='fill'\
+              height={400}
+              width={800}
+              objectFit='cover'
+              objectPosition='center'
+              quality={100}
+              className='img-thumbnail img-fluid'
+            />
+          </div>
 
           <div
             dangerouslySetInnerHTML={{ __html: article.content }}

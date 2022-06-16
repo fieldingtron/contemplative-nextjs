@@ -1,7 +1,6 @@
 import React from 'react'
-import Image from 'next/image'
+import CloudBackgroundOrange from '../components/CloudBackgroundOrange'
 import Layout from '../components/Layout'
-import sunsetPic from '../public/img/sunset-clouds.jpg'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { FormData } from 'formdata-node'
@@ -45,15 +44,7 @@ export default function ContactPage() {
     <Layout>
       <NextSeo title='Contact Page' />
       <main>
-        <Image
-          src={sunsetPic}
-          className='overlayz'
-          alt='Sunset Cloud Background'
-          layout='fill'
-          objectFit='center'
-          objectPosition='center'
-          priority
-        />
+        <CloudBackgroundOrange />
 
         <section className='position-relative py-4 py-xl-5'>
           <div className='container position-relative'>

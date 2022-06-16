@@ -1,8 +1,8 @@
 import Layout from '../../components/Layout'
-import Image from 'next/image'
-import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import ArticleSummary from '../../components/ArticleSummary'
 import { NextSeo } from 'next-seo'
+
+import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 
 export default function Articles({ articles }) {
   // console.log('data received')
@@ -14,12 +14,7 @@ export default function Articles({ articles }) {
     <Layout>
       <NextSeo title='List of Articles' />
       <main>
-        <Image
-          src={sunsetPic}
-          className='overlayz'
-          alt='Sunset Cloud Background'
-          layout='fill'
-        />
+        <CloudBackgroundOrange />
 
         <div className='container py-3'>
           <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>

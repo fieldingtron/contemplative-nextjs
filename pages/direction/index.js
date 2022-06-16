@@ -1,7 +1,6 @@
 import Layout from '../../components/Layout'
-import moment from 'moment'
-import Image from 'next/image'
-import sunsetPic from '../../public/img/sunset-clouds.jpg'
+import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
+
 import DirectionSummary from '../../components/DirectionSummary'
 import { NextSeo } from 'next-seo'
 export default function Direction({ data }) {
@@ -15,13 +14,7 @@ export default function Direction({ data }) {
     <Layout>
       <NextSeo title='Leadership Contemplative path' />
       <main>
-        <Image
-          src={sunsetPic}
-          className='overlayz'
-          alt='Sunset Cloud Background'
-          layout='fill'
-          priority
-        />
+        <CloudBackgroundOrange />
 
         <div className='container py-3'>
           <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>

@@ -1,7 +1,6 @@
 import React from 'react'
-import Image from 'next/image'
+import CloudBackgroundOrange from '../components/CloudBackgroundOrange'
 import Layout from '../components/Layout'
-import sunsetPic from '../public/img/sunset-clouds.jpg'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 
@@ -99,14 +98,8 @@ export default function ContactPage() {
   return (
     <Layout>
       <main>
-        <Image
-          src={sunsetPic}
-          className='overlayz'
-          alt='Sunset Cloud Background'
-          layout='fill'
-          objectFit='center'
-          objectPosition='center'
-        />
+        <CloudBackgroundOrange />
+
         <section className='position-relative py-4 py-xl-5'>
           <div className='container position-relative'>
             <div className='row d-flex justify-content-center'>

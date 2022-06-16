@@ -1,10 +1,9 @@
-import Image from 'next/image'
 import Layout from '../components/Layout'
-import sunsetPic from '../public/img/sunset-clouds.jpg'
 import Link from 'next/link'
 import axios from 'axios'
 import csvtojson from 'csvtojson'
 import { NextSeo } from 'next-seo'
+import CloudBackgroundOrange from '../components/CloudBackgroundOrange'
 
 export default function friends({ links }) {
   const SSKEY = process.env.SPREADSHEET_KEY
@@ -14,15 +13,7 @@ export default function friends({ links }) {
     <Layout>
       <NextSeo title='List of Friends' />
       <main>
-        <Image
-          src={sunsetPic}
-          className='overlayz'
-          alt='Sunset Cloud Background'
-          layout='fill'
-          objectFit='center'
-          objectPosition='center'
-          priority
-        />
+        <CloudBackgroundOrange />
 
         <div key='main' className='container py-3 position-relative'>
           <h1 className='text-center hero-text text-black-50 py-3'>Friends</h1>

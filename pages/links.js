@@ -1,22 +1,13 @@
 import Layout from '../components/Layout'
 import Link from 'next/link'
-import cloudPic from '../public/img/blue-clouds.jpeg'
-import sunsetPic from '../public/img/sunset-clouds.jpg'
-
-import Image from 'next/image'
+import CloudBackgroundOrange from '../components/CloudBackgroundOrange'
 
 export default function Links() {
   return (
     <Layout>
       <main>
-        <Image
-          src={sunsetPic}
-          className='overlayz'
-          alt='Sunset Pic Background'
-          layout='fill'
-          objectFit='center'
-          objectPosition='center'
-        />
+        <CloudBackgroundOrange />
+
         <div
           id='centerHero'
           className='container py-3 position-relative onTop100'
