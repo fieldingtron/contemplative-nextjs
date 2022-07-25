@@ -15,8 +15,26 @@ export default function friends({ links }) {
       <main>
         <CloudBackgroundOrange />
 
-        <div key='main' className='container py-3 position-relative'>
+        <div
+          key='main'
+          className='container py-3 position-relative text-black-50 '
+        >
           <h1 className='text-center hero-text text-black-50 py-3'>Friends</h1>
+
+          <h2>Introduction Friends Page</h2>
+
+          <p>
+            It is our hope that the links listed on this page will help the
+            sites have their “serchability” increase.The more incoming links a
+            site has,the better its rating by search engines.
+          </p>
+          <p>
+            The links on the Friends page contain information truly from
+            friends; Also this page contains information from sites that are in
+            sync with the contemplative mission of this site. We hope they enjoy
+            increase activity too.
+          </p>
+
           <ul>
             {links.map((link) => (
               <li className='fs-4' key={link.Link}>
