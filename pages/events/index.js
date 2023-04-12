@@ -6,8 +6,8 @@ import EventSummary from '../../components/EventSummary'
 import { NextSeo } from 'next-seo'
 
 export default function Events({ events }) {
-  // console.log('data received')
-  // console.log({ events })
+  //console.log('data received')
+  ///console.log({ events })
   //console.log('first event received')
   //const event = events[0]
   //console.log(event)
@@ -34,12 +34,30 @@ export default function Events({ events }) {
         />
 
         <div className='container py-3'>
+          {upcomingEvents && (
+            <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
+              Upcoming Events
+            </h1>
+          )}
+
+          {upcomingEvents &&
+            events
+              .filter((event) => event.node.requiredData.date >= date)
+              .map((event) => (
+                <EventSummary
+                  event={event.node}
+                  key={event.node.id}
+                  value={event.node.id}
+                />
+                //value={number}
+              ))}
+
           <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
             {pastEvents} Past Events
           </h1>
 
           {events
-            .filter((event) => event.node.requiredData.date <= date)
+            .filter((event) => event.node.requiredData.date < date)
             .map((event) => (
               <EventSummary
                 event={event.node}
