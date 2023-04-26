@@ -1,5 +1,5 @@
 import React from 'react'
-import Image from 'next/image'
+import Image from "next/legacy/image"
 import sunsetPic from '../public/img/sunset-clouds.jpg'
 
 export default function CloudBackgroundOrange() {

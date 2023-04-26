@@ -1,7 +1,7 @@
 import Layout from '../../components/Layout'
 import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
-import Image from 'next/image'
+import Image from "next/legacy/image"
 
 export default function Direction({ data }) {
   //console.log(' articlez received')

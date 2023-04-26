@@ -1,6 +1,6 @@
 import Layout from '../../components/Layout'
 import moment from 'moment'
-import Image from 'next/image'
+import Image from "next/legacy/image"
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import EventSummary from '../../components/EventSummary'
 import { NextSeo } from 'next-seo'

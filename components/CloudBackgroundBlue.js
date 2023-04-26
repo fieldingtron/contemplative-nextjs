@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from "next/legacy/image"
 import cloudPic from '../public/img/blue-clouds.jpeg'
 export default function CloudBackgroundBlue() {
   return (

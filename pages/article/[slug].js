@@ -2,7 +2,7 @@ import Layout from '../../components/Layout'
 import moment from 'moment'
 import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
-import Image from 'next/image'
+import Image from "next/legacy/image"
 
 export default function Art({ article }) {
   //console.log(' articlez received')
