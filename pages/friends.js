@@ -39,7 +39,7 @@ export default function friends({ links }) {
             {links.map((link) => (
               <li className='fs-4' key={link.Link}>
                 <Link href={link.Link} target='_blank'>
-                  <a> {link.Title}</a>
+                  {link.Title}
                 </Link>
                 - {link.Comments}
               </li>

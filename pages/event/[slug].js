@@ -2,6 +2,7 @@ import Layout from '../../components/Layout'
 import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Evt({ event }) {
   //console.log(' eventz received')
@@ -49,6 +50,18 @@ export default function Evt({ event }) {
             dangerouslySetInnerHTML={{ __html: event.content }}
             className='fs-5 my-2 mx-sm-2 mx-md-3'
           />
+          {event.requiredData.registerurl && (
+            <div className='d-flex justify-content-center'>
+              <button className='btn btn-success text-white' type='button'>
+                <Link
+                  className='text-white'
+                  href={event.requiredData.registerurl}
+                >
+                  Register for Event
+                </Link>
+              </button>
+            </div>
+          )}
         </div>
       </main>
     </Layout>

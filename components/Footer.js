@@ -24,29 +24,19 @@ export default function Footer() {
               <h3>Important Links</h3>
               <ul id='topfooterlinks'>
                 <li>
-                  <Link href='/events'>
-                    <a>Events</a>
-                  </Link>
+                  <Link href='/events'>Events</Link>
                 </li>
                 <li>
-                  <Link href='/articles'>
-                    <a>Articles</a>
-                  </Link>
+                  <Link href='/articles'>Articles</Link>
                 </li>
                 <li>
-                  <Link href='/direction'>
-                    <a>Direction</a>
-                  </Link>
+                  <Link href='/direction'>Direction</Link>
                 </li>
                 <li>
-                  <Link href='/friends'>
-                    <a>Friends</a>
-                  </Link>
+                  <Link href='/friends'>Friends</Link>
                 </li>
                 <li>
-                  <Link href='/contact'>
-                    <a>Contact</a>
-                  </Link>
+                  <Link href='/contact'>Contact</Link>
                 </li>
               </ul>
             </div>
@@ -57,10 +47,12 @@ export default function Footer() {
         <div className='container'>
           <div className='row row-cols-1 row-cols-md-2'>
             <div className='col text-center'>
-              <Link href='/'>
-                <a id='footerhomelink' className='link-secondary d-block my-2'>
-                  © 2022 Contemplative Path
-                </a>
+              <Link
+                href='/'
+                id='footerhomelink'
+                className='link-secondary d-block my-2'
+              >
+                © 2022 Contemplative Path
               </Link>
             </div>
             {/* <div className='col'>
@@ -76,8 +68,8 @@ export default function Footer() {
                 className='list-inline text-center text-success my-2'
               >
                 <li className='list-inline-item'>
-                  <Link href='/privacy'>
-                    <a className='link-secondary footlink'>Privacy Policy</a>
+                  <Link href='/privacy' className='link-secondary footlink'>
+                    Privacy Policy
                   </Link>
                 </li>
               </ul>

@@ -14,19 +14,17 @@ export default function ArticleSummary({ article }) {
     <div className='row py-3'>
       <div className='col-md-4 col-xxl-3 offset-xxl-1 text-center p-1'>
         <Link href={article.uri}>
-          <a>
-            <Image
-              alt={article.featuredImage.node.altText}
-              src={article.featuredImage.node.sourceUrl}
-              // layout='fill'\
-              height={250}
-              width={400}
-              objectFit='cover'
-              objectPosition='center'
-              quality={100}
-              className='img-thumbnail img-fluid'
-            />
-          </a>
+          <Image
+            alt={article.featuredImage.node.altText}
+            src={article.featuredImage.node.sourceUrl}
+            // layout='fill'\
+            height={250}
+            width={400}
+            objectFit='cover'
+            objectPosition='center'
+            quality={100}
+            className='img-thumbnail img-fluid'
+          />
         </Link>
       </div>
       <div className='col-md-8 col-xxl-7 d-flex flex-column justify-content-center align-items-center align-items-md-start p-4 position-relative'>
@@ -37,9 +35,7 @@ export default function ArticleSummary({ article }) {
           dangerouslySetInnerHTML={{ __html: article.excerpt }}
         />
         <Link href={article.uri}>
-          <a>
-            <h5>Click here to read full article</h5>
-          </a>
+          <h5>Click here to read full article</h5>
         </Link>
       </div>
     </div>

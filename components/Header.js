@@ -13,10 +13,8 @@ export default function Header() {
       <nav>
         <nav className='navbar navbar-light navbar-expand-lg'>
           <div className='container'>
-            <Link href='/'>
-              <a className='navbar-brand pulse'>
-                Contemplative <span id='homelinkspan'> Path</span>
-              </a>
+            <Link href='/' className='navbar-brand pulse'>
+              Contemplative <span id='homelinkspan'> Path</span>
             </Link>
 
             <button
@@ -30,40 +28,39 @@ export default function Header() {
             <div id='navcol-1' className='collapse navbar-collapse fs-5'>
               <ul className='navbar-nav ms-auto'>
                 <li className='nav-item'>
-                  <Link href='/events'>
-                    <a
-                      className={
-                        router.pathname == '/events'
-                          ? 'nav-link active'
-                          : 'nav-link'
-                      }
-                    >
-                      Events
-                    </a>
+                  <Link
+                    href='/events'
+                    className={
+                      router.pathname == '/events'
+                        ? 'nav-link active'
+                        : 'nav-link'
+                    }
+                  >
+                    Events
                   </Link>
                 </li>
 
                 <li className='nav-item'>
-                  <Link href='/articles'>
-                    <a className='nav-link'>Articles</a>
+                  <Link href='/articles' className='nav-link'>
+                    Articles
                   </Link>
                 </li>
 
                 <li className='nav-item'>
-                  <Link href='/direction'>
-                    <a className='nav-link'>Direction</a>
+                  <Link href='/direction' className='nav-link'>
+                    Direction
                   </Link>
                 </li>
 
                 <li className='nav-item'>
-                  <Link href='/friends'>
-                    <a className='nav-link'>Friends</a>
+                  <Link href='/friends' className='nav-link'>
+                    Friends
                   </Link>
                 </li>
 
                 <li className='nav-item'>
-                  <Link href='/contact'>
-                    <a className='nav-link'>Contact</a>
+                  <Link href='/contact' className='nav-link'>
+                    Contact
                   </Link>
                 </li>
               </ul>
