@@ -18,19 +18,19 @@ export default function Home() {
             Spiritual Retreats Online and In-Person
           </h3>
           <div className='d-flex flex-column align-items-center flex-sm-row my-1 onTop100'>
-            <Link href='/events'>
-              <a className='btn mx-4 homebut' role='button'>
+            <Link href='/events' className='btn mx-4 homebut' role='button'>
+              
                 Upcoming Events
-              </a>
+              
             </Link>
-            <Link href='/events'>
-              <a className='btn homebut' role='button'>
+            <Link href='/events' className='btn homebut' role='button'>
+              
                 Past Events
-              </a>
+              
             </Link>
           </div>
         </div>
       </main>
     </Layout>
-  )
+  );
 }

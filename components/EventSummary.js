@@ -1,5 +1,5 @@
 import React from 'react'
-import Image from "next/legacy/image"
+import Image from 'next/legacy/image'
 import Link from 'next/link'
 import profilePic from '../public/img/blue-mandala.png'
 
@@ -25,17 +25,23 @@ export default function EventSummary({ event }) {
         }
       </div>
       <div className='col-md-8 d-flex flex-column justify-content-center align-items-center align-items-md-start p-4'>
-        <Link href={event.uri} className='noLink position-relative'>
-          <h4 className='text-start'>{event.title}</h4>
-          {event.requiredData.subtitle && (
-            <h4 className='text-start'>{event.requiredData.subtitle}</h4>
-          )}
-          {event.requiredData.subtitle2 && (
-            <h4 className='text-start'>{event.requiredData.subtitle2}</h4>
-          )}
-          {event.requiredData.subtitle3 && (
-            <h4 className='text-start'>{event.requiredData.subtitle3}</h4>
-          )}
+        <Link
+          href={event.uri}
+          className='noLink position-relative'
+          legacyBehavior
+        >
+          <div>
+            <h4 className='text-start'>{event.title}</h4>
+            {event.requiredData.subtitle && (
+              <h4 className='text-start'>{event.requiredData.subtitle}</h4>
+            )}
+            {event.requiredData.subtitle2 && (
+              <h4 className='text-start'>{event.requiredData.subtitle2}</h4>
+            )}
+            {event.requiredData.subtitle3 && (
+              <h4 className='text-start'>{event.requiredData.subtitle3}</h4>
+            )}
+          </div>
         </Link>
       </div>
     </div>

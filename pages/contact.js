@@ -21,14 +21,15 @@ export default function ContactPage() {
 
   function submitForm(data, evt) {
     evt.preventDefault()
-    // console.log('data', data)
-    // console.log('evt', evt)
+    console.log('data', data)
+    console.log('evt', evt)
 
     const formData = new FormData(evt.target)
     const EMAIL_FROM = process.env.NEXT_PUBLIC_EMAIL_URL
+    console.log(formData)
 
     setResponse(false)
-    //console.log('start')
+    console.log('start')
 
     return new Promise((resolve) => {
       axios.post(EMAIL_FROM, formData).then((res) => {

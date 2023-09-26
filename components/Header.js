@@ -13,8 +13,8 @@ export default function Header() {
       <nav>
         <nav className='navbar navbar-light navbar-expand-lg'>
           <div className='container'>
-            <Link href='/' className='navbar-brand pulse'>
-              Contemplative <span id='homelinkspan'> Path</span>
+            <Link href='/' className='navbar-brand pulse' legacyBehavior>
+              Contemplative Path
             </Link>
 
             <button

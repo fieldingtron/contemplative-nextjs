@@ -13,7 +13,7 @@ export default function ArticleSummary({ article }) {
   return (
     <div className='row py-3'>
       <div className='col-md-4 col-xxl-3 offset-xxl-1 text-center p-1'>
-        <Link href={article.uri}>
+        <Link href={article.uri} legacyBehavior>
           <Image
             alt={article.featuredImage.node.altText}
             src={article.featuredImage.node.sourceUrl}
@@ -34,10 +34,10 @@ export default function ArticleSummary({ article }) {
           className='fs-5'
           dangerouslySetInnerHTML={{ __html: article.excerpt }}
         />
-        <Link href={article.uri}>
+        <Link href={article.uri} legacyBehavior>
           <h5>Click here to read full article</h5>
         </Link>
       </div>
     </div>
-  )
+  );
 }

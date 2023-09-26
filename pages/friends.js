@@ -38,7 +38,7 @@ export default function friends({ links }) {
           <ul>
             {links.map((link) => (
               <li className='fs-4' key={link.Link}>
-                <Link href={link.Link} target='_blank'>
+                <Link href={link.Link} target='_blank' legacyBehavior>
                   {link.Title}
                 </Link>
                 - {link.Comments}
@@ -56,7 +56,7 @@ export default function friends({ links }) {
         </div>
       </main>
     </Layout>
-  )
+  );
 }
 
 export async function getStaticProps() {

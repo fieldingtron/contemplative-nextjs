@@ -22,7 +22,7 @@ export default function friends({ links }) {
             {links.map((link) => (
               <li className='fs-4' key={link.url}>
                 <Link href={link.url} target='_blank'>
-                  <a> {link.name}</a>
+                   {link.name}
                 </Link>
                 - {link.description}
               </li>
@@ -39,7 +39,7 @@ export default function friends({ links }) {
         </div>
       </main>
     </Layout>
-  )
+  );
 }
 
 export async function getStaticProps() {
