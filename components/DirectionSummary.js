@@ -4,8 +4,8 @@ import Link from 'next/link'
 import profilePic from '../public/img/blue-mandala.png'
 
 export default function DirectionSummary({ data }) {
-  console.log('data')
-  console.log({ data })
+  //console.log('data')
+  //console.log({ data })
   return (
     <div className='row py-2'>
       <div className='col-md-4 text-center p-1'>

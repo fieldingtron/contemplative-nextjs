@@ -1,11 +1,11 @@
 import React from 'react'
-import Image from "next/legacy/image"
+import Image from 'next/legacy/image'
 import Link from 'next/link'
 // import profilePic from '../public/img/blue-mandala.png'
 import moment from 'moment'
 
 export default function ArticleSummary({ article }) {
-  console.log({ article })
+  //console.log({ article })
   const { DOMAIN_URL } = process.env
 
   article.excerpt = article.excerpt.toString().replace(DOMAIN_URL, 'XXX')
@@ -39,5 +39,5 @@ export default function ArticleSummary({ article }) {
         </Link>
       </div>
     </div>
-  );
+  )
 }

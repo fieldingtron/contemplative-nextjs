@@ -1,6 +1,6 @@
 import Layout from '../../components/Layout'
 import moment from 'moment'
-import Image from "next/legacy/image"
+import Image from 'next/legacy/image'
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import EventSummary from '../../components/EventSummary'
 import { NextSeo } from 'next-seo'
@@ -34,13 +34,13 @@ export default function Events({ events }) {
         />
 
         <div className='container py-3'>
-          {upcomingEvents && (
+          {upcomingEvents > 0 && (
             <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
               Upcoming Events
             </h1>
           )}
 
-          {upcomingEvents &&
+          {upcomingEvents > 0 &&
             events
               .filter((event) => event.node.requiredData.date >= date)
               .map((event) => (
