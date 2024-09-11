@@ -14,7 +14,7 @@ export default function Header() {
         <nav className='navbar navbar-light navbar-expand-lg'>
           <div className='container'>
             <Link href='/' className='navbar-brand pulse' legacyBehavior>
-              Contemplative Path
+              <h1> contemplative trip</h1>
             </Link>
 
             <button

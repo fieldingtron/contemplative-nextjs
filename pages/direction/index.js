@@ -12,7 +12,7 @@ export default function Direction({ data }) {
 
   return (
     <Layout>
-      <NextSeo title='Leadership Contemplative path' />
+      <NextSeo title='Leadership contemplative trip' />
       <main>
         <CloudBackgroundOrange />
 

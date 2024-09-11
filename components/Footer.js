@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 export default function Footer() {
+  const year = new Date().getFullYear()
   return (
     <footer className='mt-auto'>
       <div id='footer-top'>
@@ -9,7 +10,7 @@ export default function Footer() {
         <div className='container'>
           <div id='ft' className='row g-0 row-cols-1 row-cols-md-2'>
             <div className='col topfootercol'>
-              <h3>About Contemplative Path</h3>
+              <h3>About Contemplative Trip</h3>
               <p id='textz' className='topfooter2nd'>
                 Facilitating Contemplative Events and Retreats online and in
                 person.
@@ -52,7 +53,7 @@ export default function Footer() {
                 id='footerhomelink'
                 className='link-secondary d-block my-2'
               >
-                © 2022 Contemplative Path
+                © {year} Contemplative Trip
               </Link>
             </div>
             {/* <div className='col'>

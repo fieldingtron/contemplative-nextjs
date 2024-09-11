@@ -21,6 +21,6 @@ export default function Layout({ title, description, children }) {
 }
 
 Layout.defaultProps = {
-  title: ' Contemplative Path ',
+  title: ' Contemplative Trip ',
   description: 'Online and In Person Retreats',
 }
