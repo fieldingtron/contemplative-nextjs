@@ -3,7 +3,11 @@ import styles from '../styles/Layout.module.css'
 import Header from './Header'
 import Footer from './Footer'
 
-export default function Layout({ title, description, children }) {
+export default function Layout({
+  title = ' Contemplative Trip ',
+  description = 'Online and In Person Retreats',
+  children,
+}) {
   return (
     <div>
       <Head>
@@ -18,9 +22,4 @@ export default function Layout({ title, description, children }) {
       </div>
     </div>
   )
-}
-
-Layout.defaultProps = {
-  title: ' Contemplative Trip ',
-  description: 'Online and In Person Retreats',
 }
