@@ -2,7 +2,9 @@ import Layout from '../../components/Layout'
 import moment from 'moment'
 import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
-import Image from "next/legacy/image"
+import Image from 'next/legacy/image'
+import { client } from '../../tina/__generated__/client'
+import { TinaMarkdown } from 'tinacms/dist/rich-text'
 
 export default function Art({ article }) {
   //console.log(' articlez received')
@@ -27,8 +29,8 @@ export default function Art({ article }) {
           </h6>
           <div className='d-flex justify-content-center align-items-center'>
             <Image
-              alt={article.featuredImage.node.altText}
-              src={article.featuredImage.node.sourceUrl}
+              alt={article.title}
+              src={article.featuredImage}
               // layout='fill'\
               height={400}
               width={800}
@@ -39,10 +41,9 @@ export default function Art({ article }) {
             />
           </div>
 
-          <div
-            dangerouslySetInnerHTML={{ __html: article.content }}
-            className='fs-5 my-2 mx-sm-2 mx-md-3'
-          />
+          <div className='fs-4 my-2 mx-sm-2 mx-md-3'>
+            <TinaMarkdown content={article.body} />
+          </div>
         </div>
       </main>
     </Layout>
@@ -50,94 +51,31 @@ export default function Art({ article }) {
 }
 
 export async function getStaticProps({ params }) {
-  //console.log(params)
-  //console.log('here are parameters')
-  const { API_URL } = process.env
-  const response = await fetch(`${API_URL}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
-
-      {
-        article(id: "${params.slug}", idType: SLUG) {
-          id
-          slug
-          title
-          uri
-          date
-          content
-          featuredImage {
-            node {
-              altText
-              sourceUrl
-            }
-          }
-        }
-      }
-      
-                `,
-    }),
-  })
-
-  const json = await response.json()
-  //console.log('data here')
-  //console.log(json.data)
-  // console.log('edges here')
-  // console.log(json.data.articles.edges)
+  // Fetch the article dynamically using the slug from the URL
+  const relativePath = `${params.slug}.mdx` // Assuming your files have a .md extension
+  const { data } = await client.queries.article({ relativePath })
+  //console.log(data)
 
   return {
     props: {
-      article: json.data.article,
+      article: data.article,
     },
   }
 }
 
 export async function getStaticPaths() {
-  const { API_URL } = process.env
-  const response = await fetch(`${API_URL}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
-      query articlez {
-        articles {
-          edges {
-            node {
-              uri
-              title
-              date
-              slug
-            }
-          }
-        }
-      }            
-                `,
-    }),
-  })
+  // Fetch all articles or posts to generate paths
+  const { data } = await client.queries.articleConnection()
 
-  const posts = await response.json()
-  console.log('data here')
-  console.log(posts.data.articles.edges)
-  // console.log('edges here')
-  // console.log(json.data.articles.edges)
-
-  // Get the paths we want to pre-render based on posts
-  const paths = posts.data.articles.edges.map((post) => ({
-    params: { slug: post.node.slug },
+  // Map the data to generate dynamic paths based on slugs
+  const paths = data.articleConnection.edges.map((post) => ({
+    params: { slug: post.node._sys.filename }, // Assumes your slug matches the filename
   }))
 
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
-  return { paths, fallback: false }
+  //console.log(paths)
 
   return {
-    props: {
-      articles: json.data.articles.edges,
-    },
+    paths,
+    fallback: false, // Set to true if you want fallback pages for non-pre-rendered paths
   }
 }

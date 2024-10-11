@@ -9,7 +9,7 @@ export default function Articles({ articles }) {
   // console.log('data received')
   // console.log({ events })
   //console.log('first article received')
-  console.log(articles)
+  //console.log(articles)
   //console.log(event)
   return (
     <Layout>
