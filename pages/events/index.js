@@ -9,8 +9,8 @@ export default function Events({ events }) {
   //console.log('data received')
   ///console.log({ events })
   //console.log('first event received')
-  //const event = events[0]
-  //console.log(event)
+  const event = events[0]
+  console.log(event)
   const d = new Date()
   const date = moment(d).format('YYYY-MM-DD')
   const pastEvents = events.filter(

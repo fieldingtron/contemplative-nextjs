@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "tinacms dev -c \"next dev\"",
+    "build": "tinacms build && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -23,6 +23,11 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
     "react-papaparse": "^4.4.0",
-    "tabletop": "^1.6.3"
+    "tabletop": "^1.6.3",
+    "tinacms": "^2.2.9"
+  },
+  "devDependencies": {
+    "@tinacms/cli": "^1.6.9",
+    "@types/node": "^22.7.5"
   }
 }

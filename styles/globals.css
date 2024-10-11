@@ -133,3 +133,11 @@ header .container h1 {
   font-size: 2rem;
 }
 
+.img-hover-border {
+  border: 5px solid transparent; /* Initial border */
+  transition: border-color 0.3s ease; /* Smooth transition */
+}
+
+.img-hover-border:hover {
+  border-color: purple; /* Border color on hover */
+}

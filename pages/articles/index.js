@@ -3,12 +3,13 @@ import ArticleSummary from '../../components/ArticleSummary'
 import { NextSeo } from 'next-seo'
 
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
+import { client } from '../../tina/__generated__/client'
 
 export default function Articles({ articles }) {
   // console.log('data received')
   // console.log({ events })
-  console.log('first article received')
-  console.log(articles[0])
+  //console.log('first article received')
+  console.log(articles)
   //console.log(event)
   return (
     <Layout>
@@ -20,9 +21,18 @@ export default function Articles({ articles }) {
           <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
             Articles
           </h1>
+          {/* <ul>
+            {articles.map((article) => (
+              <li key={article.id}>
+                <h2>{article.title}</h2>
+                <p>{article.subtitle}</p>
+                <time>{new Date(article.date).toLocaleDateString()}</time>
+              </li>
+            ))}
+          </ul> */}
 
           {articles.map((article) => (
-            <ArticleSummary article={article.node} key={article.node.id} />
+            <ArticleSummary article={article} key={article.id} />
           ))}
         </div>
       </main>
@@ -31,46 +41,11 @@ export default function Articles({ articles }) {
 }
 
 export async function getStaticProps() {
-  const { API_URL } = process.env
-  const response = await fetch(`${API_URL}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
-      query datazz {
-        articles {
-          edges {
-            node {
-              id
-              uri
-              excerpt
-              title
-              date
-              featuredImage {
-                node {
-                  sourceUrl
-                  altText
-                }
-              }
-            }
-          }
-        }
-      }            
-      `,
-    }),
-  })
-
-  const json = await response.json()
-  console.log('data here')
-  console.log(json.data)
-  console.log('edges here')
-  console.log(json.data.articles.edges)
+  const { data } = await client.queries.articleConnection()
 
   return {
     props: {
-      articles: json.data.articles.edges,
+      articles: data.articleConnection.edges.map((edge) => edge.node),
     },
   }
 }
