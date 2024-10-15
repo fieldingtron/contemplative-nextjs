@@ -3,12 +3,11 @@ import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 
 import DirectionSummary from '../../components/DirectionSummary'
 import { NextSeo } from 'next-seo'
+import { client } from '../../tina/__generated__/client' // Adjust the path based on your project structure
+
 export default function Direction({ data }) {
   // console.log('data received')
-  // console.log({ events })
-  //console.log('first event received')
-  //const dddd = data[0]
-  //console.log(dddd)
+  console.log({ data })
 
   return (
     <Layout>
@@ -20,10 +19,9 @@ export default function Direction({ data }) {
           <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
             Direction
           </h1>
-
           <ul>
             {data.map((data) => (
-              <DirectionSummary key={data.node.id} data={data} />
+              <DirectionSummary key={data.id} data={data} />
             ))}
           </ul>
         </div>
@@ -33,51 +31,13 @@ export default function Direction({ data }) {
 }
 
 export async function getStaticProps() {
-  const { API_URL } = process.env
-  const response = await fetch(`${API_URL}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
-
-
-      query datazz {
-        direction {
-          edges {
-            node {
-              id
-              slug
-              uri
-              title
-              excerpt
-              featuredImage {
-                node {
-                  altText
-                  sourceUrl
-                }
-              }
-            }
-          }
-        }
-      }
-
-      
-                 
-                `,
-    }),
-  })
-
-  const json = await response.json()
-  // console.log('data here')
-  // console.log(json.data)
-  // console.log('edges here')
-  // console.log(json.data.events.edges)
+  // Use the pre-generated TinaCMS client to fetch the data
+  const { data } = await client.queries.directionConnection()
+  //console.log(data)
 
   return {
     props: {
-      data: json.data.direction.edges,
+      data: data.directionConnection.edges.map((edge) => edge.node),
     },
   }
 }

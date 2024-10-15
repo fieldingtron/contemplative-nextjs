@@ -12,8 +12,8 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <DefaultSeo
-        titleTemplate={'%s | ContemplativePath '}
-        defaultTitle={'ContemplativePath'}
+        titleTemplate={'%s | ContemplativeTrip '}
+        defaultTitle={'ContemplativeTrip'}
       />
       <Component {...pageProps} />
     </>

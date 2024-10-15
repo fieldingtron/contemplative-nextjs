@@ -104,6 +104,79 @@ export default defineConfig({
         // },
       },
       {
+        name: "direction",
+        label: "Direction",
+        path: "content/direction",
+        format: "mdx",
+
+        fields: [
+          {
+            type: "string",
+            name: "title",
+            label: "Title",
+            isTitle: true,
+            required: true,
+          },
+          {
+            type: "datetime",
+            name: "date",
+            label: "Date",
+            required: true,
+          },
+          {
+            type: "string",
+            name: "excerpt",
+            label: "Excerpt",
+            required: true,
+          },
+           
+           
+          {
+            type: 'image',
+            label: 'Featured Image',
+            name: 'featuredImage',
+            required: true,
+
+          },
+
+          {
+            type: "rich-text",
+            name: "body",
+            label: "Body",
+            isBody: true,
+          }
+          ,
+          {
+            type: "string",
+            name: "slug",
+            label: "Slug",
+          }
+        ],
+        ui: {
+          beforeSubmit: async ({
+            form,
+            cms,
+            values,
+          }: {
+            form: Form
+            cms: TinaCMS
+            values: Record<string, any>
+          }) => {
+            return {
+              ...values,
+              slug: values.title
+                .toLowerCase()
+                .replace(/ /g, '-')
+                .replace(/[^\w-]+/g, ''),
+            }
+          },
+        }
+        // ui: {
+        //   // This is an DEMO router. You can remove this to fit your site
+        //   router: ({ document }) => `/article/${document._sys.filename}`,
+        // },
+      },
+      {
         name: "events",
         label: "Events",
         path: "content/events",
