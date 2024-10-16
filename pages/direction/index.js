@@ -33,7 +33,7 @@ export default function Direction({ data }) {
 export async function getStaticProps() {
   // Use the pre-generated TinaCMS client to fetch the data
   const { data } = await client.queries.directionConnection()
-  //console.log(data)
+  console.log(data)
 
   return {
     props: {

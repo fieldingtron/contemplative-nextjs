@@ -32,14 +32,18 @@ export default function ArticleSummary({ article }) {
         </Link>
       </div>
       <div className='col-md-8 col-xxl-7 d-flex flex-column justify-content-center align-items-center align-items-md-start p-4 position-relative'>
-        <h4>{article.title}</h4>
+        <Link href={`/article/${article.slug}`}>
+          <h4>{article.title}</h4>
+        </Link>
         <h6>{moment(article.date).format('MMM Do YYYY')}</h6>
         <div
           className='fs-5'
           dangerouslySetInnerHTML={{ __html: article.excerpt }}
         />
-        <Link href={`/article/${article.slug}`} legacyBehavior>
-          <h5 className='img-hover-border'>Click here to read full article</h5>
+        <Link href={`/article/${article.slug}`}>
+          <h5 className='img-hover-border position-relative'>
+            Click here to read full article
+          </h5>
         </Link>
       </div>
     </div>

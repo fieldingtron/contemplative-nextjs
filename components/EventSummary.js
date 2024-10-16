@@ -5,14 +5,19 @@ import profilePic from '../public/img/blue-mandala.png'
 
 export default function EventSummary({ event }) {
   //console.log({ event })
+  event.url = `/event/${event.id}`
+    .replace('.mdx', '/')
+    .replace('/content/events', '')
+  //.replace('/events//events/', '')
+  //console.log({ event })
   return (
     <div className='row py-2'>
       <div className='col-md-4 text-center p-1'>
         {
-          <Link href={event.uri}>
+          <Link href={`${event.url}`}>
             <Image
-              alt={event.featuredImage.node.altText}
-              src={event.featuredImage.node.sourceUrl}
+              alt={event.title}
+              src={event.featuredImage}
               // layout='fill'\
               height={200}
               width={200}
@@ -26,20 +31,17 @@ export default function EventSummary({ event }) {
       </div>
       <div className='col-md-8 d-flex flex-column justify-content-center align-items-center align-items-md-start p-4'>
         <Link
-          href={event.uri}
+          href={`${event.url}`} // ${event.uri}
           className='noLink position-relative'
-          legacyBehavior
         >
           <div>
             <h4 className='text-start'>{event.title}</h4>
-            {event.requiredData.subtitle && (
-              <h4 className='text-start'>{event.requiredData.subtitle}</h4>
+            {event.subtitle && <h4 className='text-start'>{event.subtitle}</h4>}
+            {event.subtitle2 && (
+              <h4 className='text-start'>{event.subtitle2}</h4>
             )}
-            {event.requiredData.subtitle2 && (
-              <h4 className='text-start'>{event.requiredData.subtitle2}</h4>
-            )}
-            {event.requiredData.subtitle3 && (
-              <h4 className='text-start'>{event.requiredData.subtitle3}</h4>
+            {event.subtitle3 && (
+              <h4 className='text-start'>{event.subtitle3}</h4>
             )}
           </div>
         </Link>

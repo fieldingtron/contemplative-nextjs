@@ -200,7 +200,7 @@ export default defineConfig({
             type: "string",
             name: "subtitle",
             label: "SubTitle",
-            required: true,
+            required: false,
           },{
             type: "string",
             name: "subtitle2",
@@ -216,13 +216,13 @@ export default defineConfig({
             type: "string",
             name: "location",
             label: "Location",
-            required: true,
+            required: false,
           },
           {
             type: "string",
             name: "presenter",
             label: "Presenter",
-            required: true,
+            required: false,
           },
           {
             type: "string",

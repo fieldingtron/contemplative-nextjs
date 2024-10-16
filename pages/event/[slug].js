@@ -1,19 +1,20 @@
 import Layout from '../../components/Layout'
 import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
-import Image from "next/legacy/image"
+import Image from 'next/legacy/image'
 import Link from 'next/link'
+import { client } from '../../tina/__generated__/client' // Import the Tina client
+import { TinaMarkdown } from 'tinacms/dist/rich-text'
 
 export default function Evt({ event }) {
-  //console.log(' eventz received')
-  //console.log(event)
-
+  // console.log('event')
+  // console.log(event)
   return (
     <Layout>
       <NextSeo title={event.title} />
+
       <main>
         <CloudBackgroundOrange />
-
         <div className='container py-3 position-relative'>
           <h3 className='text-center hero-text text-black-50'>
             <span style={{ color: 'rgb(61, 89, 122)' }}>{event.title}</span>
@@ -23,8 +24,7 @@ export default function Evt({ event }) {
             <div className='col-md-4 text-center p-1'>
               <Image
                 alt={event.title}
-                src={event.featuredImage.node.sourceUrl}
-                // layout='fill'\
+                src={event.featuredImage}
                 height={200}
                 width={200}
                 objectFit='cover'
@@ -35,28 +35,25 @@ export default function Evt({ event }) {
             </div>
             <div className='col-md-8 d-flex flex-column justify-content-center align-items-center align-items-md-start p-4'>
               <h4 className='text-start'>{event.title}</h4>
-              {event.requiredData.subtitle && (
-                <h4 className='text-start'>{event.requiredData.subtitle}</h4>
+              {event.subtitle && (
+                <h4 className='text-start'>{event.subtitle}</h4>
               )}
-              {event.requiredData.subtitle2 && (
-                <h4 className='text-start'>{event.requiredData.subtitle2}</h4>
+              {event.subtitle2 && (
+                <h4 className='text-start'>{event.subtitle2}</h4>
               )}
-              {event.requiredData.subtitle3 && (
-                <h4 className='text-start'>{event.requiredData.subtitle3}</h4>
+              {event.subtitle3 && (
+                <h4 className='text-start'>{event.subtitle3}</h4>
               )}
             </div>
           </div>
-          <div
-            dangerouslySetInnerHTML={{ __html: event.content }}
-            className='fs-5 my-2 mx-sm-2 mx-md-3'
-          />
-          {event.requiredData.registerurl && (
+          <div className='fs-5 my-2 mx-sm-2 mx-md-3'>
+            <TinaMarkdown content={event.body} />
+          </div>
+
+          {event.registerurl && (
             <div className='d-flex justify-content-center'>
               <button className='btn btn-success text-white' type='button'>
-                <Link
-                  className='text-white'
-                  href={event.requiredData.registerurl}
-                >
+                <Link className='text-white' href={event.registerurl}>
                   Register for Event
                 </Link>
               </button>
@@ -68,101 +65,41 @@ export default function Evt({ event }) {
   )
 }
 
+// Fetch data for a single event using TinaCMS queries
 export async function getStaticProps({ params }) {
-  //console.log(params)
-  //console.log('here are parameters')
-  const { API_URL } = process.env
-  const response = await fetch(`${API_URL}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
+  try {
+    // Use the Tina client to fetch the event by slug
+    const { data } = await client.queries.events({
+      relativePath: `${params.slug}.mdx`,
+    })
 
-      {
-        event(id: "${params.slug}", idType: SLUG) {
-          id
-          slug
-          title
-          uri
-          requiredData {
-            subtitle
-            subtitle2
-            subtitle3
-            presenter
-            registerurl
-          }
-          content
-          featuredImage {
-            node {
-              altText
-              sourceUrl
-            }
-          }
-        }
-      }
-      
-                `,
-    }),
-  })
-
-  const json = await response.json()
-  //console.log('data here')
-  //console.log(json.data)
-  // console.log('edges here')
-  // console.log(json.data.events.edges)
-
-  return {
-    props: {
-      event: json.data.event,
-    },
+    return {
+      props: {
+        event: data.events, // The event data is directly returned from TinaCMS
+      },
+    }
+  } catch (error) {
+    console.error('Error fetching event from TinaCMS:', error)
+    return {
+      notFound: true,
+    }
   }
 }
 
+// Fetch all event slugs for static paths
 export async function getStaticPaths() {
-  const { API_URL } = process.env
-  const response = await fetch(`${API_URL}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: `
-      query eventz {
-        events {
-          edges {
-            node {
-              uri
-              title
-              date
-              slug
-            }
-          }
-        }
-      }            
-                `,
-    }),
-  })
+  // Fetch all articles or posts to generate paths
+  const { data } = await client.queries.eventsConnection()
 
-  const posts = await response.json()
-  console.log('data here')
-  console.log(posts.data.events.edges)
-  // console.log('edges here')
-  // console.log(json.data.events.edges)
-
-  // Get the paths we want to pre-render based on posts
-  const paths = posts.data.events.edges.map((post) => ({
-    params: { slug: post.node.slug },
+  // Map the data to generate dynamic paths based on slugs
+  const paths = data.eventsConnection.edges.map((post) => ({
+    params: { slug: post.node._sys.filename }, // Assumes your slug matches the filename
   }))
-
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
-  return { paths, fallback: false }
+  // console.log('paths')
+  // console.log(paths)
 
   return {
-    props: {
-      events: json.data.events.edges,
-    },
+    paths,
+    fallback: false, // Set to true if you want fallback pages for non-pre-rendered paths
   }
 }

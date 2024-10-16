@@ -71,8 +71,8 @@ export async function getStaticPaths() {
   const paths = data.articleConnection.edges.map((post) => ({
     params: { slug: post.node._sys.filename }, // Assumes your slug matches the filename
   }))
-
-  //console.log(paths)
+  console.log('paths')
+  console.log(paths)
 
   return {
     paths,
