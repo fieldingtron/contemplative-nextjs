@@ -6,7 +6,7 @@ from markdownify import markdownify as md
 from urllib.parse import urlparse
 
 # WordPress GraphQL API endpoint
-GRAPHQL_ENDPOINT = "https://contemplative.dreamhosters.com/graphql"
+GRAPHQL_ENDPOINT = os.getenv("API_URL")
 
 # Directory where MDX files will be saved
 MDX_OUTPUT_DIR = "./content/events"
