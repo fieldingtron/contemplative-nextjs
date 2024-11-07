@@ -56,12 +56,11 @@ export default function friends({ links }) {
         </div>
       </main>
     </Layout>
-  );
+  )
 }
 
 export async function getStaticProps() {
-  let csvURL =
-    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSK7CO9nJoOT_lakCTKGrC4uhANqFazyH8mLAqdL66FGSKj_p24Xj7yp4dA75apB55xLwsovTDuqQw2/pub?gid=1966949909&single=true&output=csv'
+  const csvURL = process.env.CSV_URL
 
   const getLinks = async () => {
     try {
