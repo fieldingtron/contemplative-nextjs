@@ -29,11 +29,11 @@ export default function Home() {
           <h3 className='text-center hero-text my-5'>
             Prayer: Circle of Psalms
           </h3>
-          <p className='text-white'>
+          <p className='text-white mx-5'>
             Last Year we conducted a prayer circle where a group used a circle
             or individuals to select who we were praying for using any prayer.
           </p>
-          <p className='text-white'>
+          <p className='text-white mx-5'>
             This year we will pray primarily for ourselves using a psalm
             selected by God. This could be a prayer for us or a prayer to / for
             God. Also, this psalm could be for the people of the world.
