@@ -1,44 +1,52 @@
 import React from 'react'
 import CloudBackgroundOrange from '../components/CloudBackgroundOrange'
 import Layout from '../components/Layout'
-import { useState } from 'react'
-import { useRouter } from 'next/router'
-import { FormData } from 'formdata-node'
 import axios from 'axios'
 import EmailSent from '../components/EmailSent'
 import { useForm } from 'react-hook-form'
 import { NextSeo } from 'next-seo'
 
 export default function ContactPage() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [message, setMessage] = useState('')
-  const router = useRouter()
-  const [response, setResponse] = useState(false)
+  const [response, setResponse] = React.useState(false)
 
-  const { handleSubmit, formState } = useForm()
-  const { isSubmitting } = formState
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm()
 
-  function submitForm(data, evt) {
-    evt.preventDefault()
-    console.log('data', data)
-    console.log('evt', evt)
+  const submitForm = async (data) => {
+    console.log('Form Data:', data)
 
-    const formData = new FormData(evt.target)
     const EMAIL_FROM = process.env.NEXT_PUBLIC_EMAIL_URL
-    console.log(formData)
+
+    if (!EMAIL_FROM) {
+      console.error(
+        'NEXT_PUBLIC_EMAIL_URL is not defined in environment variables.'
+      )
+      return
+    }
 
     setResponse(false)
-    console.log('start')
 
-    return new Promise((resolve) => {
-      axios.post(EMAIL_FROM, formData).then((res) => {
-        //console.log('promised response')
-        //console.log(res)
-        setResponse(true)
-        resolve()
-      })
-    })
+    try {
+      // Convert form data to FormData format
+      const formData = new FormData()
+      formData.append('_wpcf7', '90') // Replace '1234' with your actual CF7 form ID
+      formData.append('_wpcf7_unit_tag', '6ff1822') // The provided unit tag
+      formData.append('your-name', data['your-name'])
+      formData.append('your-email', data['your-email'])
+      formData.append('your-message', data['your-message'])
+
+      // Send POST request
+      await axios.post(EMAIL_FROM, formData)
+      setResponse(true)
+    } catch (error) {
+      console.error(
+        'Error submitting the form:',
+        error.response?.data || error.message
+      )
+    }
   }
 
   return (
@@ -46,7 +54,6 @@ export default function ContactPage() {
       <NextSeo title='Contact Page' />
       <main>
         <CloudBackgroundOrange />
-
         <section className='position-relative py-4 py-xl-5'>
           <div className='container position-relative'>
             <div className='row d-flex justify-content-center'>
@@ -69,12 +76,11 @@ export default function ContactPage() {
                           id='name-2'
                           className='form-control'
                           type='text'
-                          name='your-name'
                           placeholder='Name'
-                          minLength={3}
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          required
+                          {...register('your-name', {
+                            required: true,
+                            minLength: 3,
+                          })}
                         />
                       </div>
                       <div className='mb-3'>
@@ -82,25 +88,20 @@ export default function ContactPage() {
                           id='email-2'
                           className='form-control'
                           type='email'
-                          name='your-email'
                           placeholder='Email'
-                          required=''
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          minLength={5}
+                          {...register('your-email', { required: true })}
                         />
                       </div>
                       <div className='mb-3'>
                         <textarea
                           id='message-2'
                           className='form-control'
-                          name='your-message'
                           rows={6}
                           placeholder='Message'
-                          required=''
-                          minLength={5}
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
+                          {...register('your-message', {
+                            required: true,
+                            minLength: 5,
+                          })}
                         />
                       </div>
                       <div>
@@ -112,7 +113,7 @@ export default function ContactPage() {
                           {isSubmitting && (
                             <span className='spinner-border spinner-border-sm mx-2'></span>
                           )}
-                          Send !
+                          Send!
                         </button>
                       </div>
                     </form>
