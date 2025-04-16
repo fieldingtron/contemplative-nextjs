@@ -195,7 +195,7 @@ exports.handler = async (event, context) => {
     const emailParams = {
       from: fromAddress,
       to: recipientEmail,
-      subject: `New Contact Form Submission from ${name}`,
+      subject: `ContemplativeTrip.com Submission from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>
         <p><strong>Name:</strong> ${name}</p>
@@ -211,7 +211,7 @@ exports.handler = async (event, context) => {
       from: fromAddress,
       to: recipientEmail,
       replyTo: email,
-      subject: `New Contact Form Submission from ${name}`,
+      subject: `Contemplative Trip Contact Form Submission from ${name}`,
     });
 
     try {
