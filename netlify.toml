@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Define redirects if needed
+#[[redirects]]
+#  from = "/api/*"
+#  to = "/.netlify/functions/:splat"
+#  status = 200
+
+# Environment variables will be defined in the Netlify dashboard
+# Do not place actual secrets here, this file is meant to be committed to source control
