@@ -203,6 +203,15 @@ exports.handler = async (event, context) => {
         <p><strong>Message:</strong></p>
         <p>${message.replace(/\n/g, "<br>")}</p>
       `,
+      text: `
+New ContemplativeTrip Form Submission
+---------------------------
+Name: ${name}
+Email: ${email}
+
+Message:
+${message}
+      `,
       // Optional reply-to header with the sender's email
       reply_to: email,
     };
