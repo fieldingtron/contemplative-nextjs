@@ -32,8 +32,8 @@ export default function ContactPage() {
     setFieldErrors({});
 
     try {
-      console.log('Submitting form to: /.netlify/functions/contact-form');
-      
+      console.log("Submitting form to: /.netlify/functions/contact-form");
+
       // Send form data to our Netlify function endpoint
       const response = await axios.post("/.netlify/functions/contact-form", {
         // Include form field data
@@ -43,8 +43,8 @@ export default function ContactPage() {
         website: data["website"], // Honeypot field
         formRenderTime, // For timing check
       });
-      
-      console.log('Response received:', response.data);
+
+      console.log("Response received:", response.data);
 
       if (response.data.success) {
         setResponse(true);
@@ -58,10 +58,10 @@ export default function ContactPage() {
             response.data.message || "Failed to send message. Please try again."
           );
         }
-        
+
         // Log any debug information if available
         if (response.data.debug) {
-          console.error('Debug info:', response.data.debug);
+          console.error("Debug info:", response.data.debug);
         }
       }
     } catch (error) {
@@ -69,9 +69,9 @@ export default function ContactPage() {
 
       // Handle axios error responses with status codes
       if (error.response) {
-        console.error('Response error data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        
+        console.error("Response error data:", error.response.data);
+        console.error("Response status:", error.response.status);
+
         const responseData = error.response.data;
 
         // Check for field-specific validation errors
@@ -83,20 +83,20 @@ export default function ContactPage() {
               `Error ${error.response.status}: An error occurred while sending your message.`
           );
         }
-        
+
         // Log any debug information if available
         if (responseData.debug) {
-          console.error('Debug info:', responseData.debug);
+          console.error("Debug info:", responseData.debug);
         }
       } else if (error.request) {
         // The request was made but no response was received
-        console.error('No response received:', error.request);
+        console.error("No response received:", error.request);
         setError(
           "Unable to connect to our server. Please check your internet connection and try again."
         );
       } else {
         // Something happened in setting up the request
-        console.error('Request setup error:', error.message);
+        console.error("Request setup error:", error.message);
         setError("An unexpected error occurred. Please try again later.");
       }
     } finally {

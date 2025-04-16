@@ -158,6 +158,7 @@ exports.handler = async (event, context) => {
     logDebugInfo("Checking environment variables", {
       hasResendApiKey: !!process.env.RESEND_API_KEY,
       hasRecipientEmail: !!process.env.RECIPIENT_EMAIL,
+      hasFromEmail: !!process.env.FROM_EMAIL,
       nodeEnv: process.env.NODE_ENV,
     });
 
@@ -181,8 +182,15 @@ exports.handler = async (event, context) => {
     const recipientEmail =
       process.env.RECIPIENT_EMAIL || "your-email@example.com";
 
-    // Prepare email parameters
-    const fromAddress = "Contemplative Contact Form <no-reply@your-domain.com>";
+    // Get from address from environment variable with fallback
+    const fromAddress =
+      process.env.FROM_EMAIL ||
+      "Contemplative Contact Form <no-reply@onresend.com>";
+
+    logDebugInfo("Using email configuration", {
+      fromAddress,
+      recipientEmail,
+    });
 
     const emailParams = {
       from: fromAddress,
@@ -263,8 +271,7 @@ exports.handler = async (event, context) => {
         statusCode: 500,
         body: JSON.stringify({
           success: false,
-          message:
-            "Error connecting to email service. Please try again later.",
+          message: "Error connecting to email service. Please try again later.",
           debug: resendError.message,
         }),
       };
