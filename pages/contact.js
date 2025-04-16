@@ -9,6 +9,7 @@ import { NextSeo } from "next-seo";
 export default function ContactPage() {
   const [response, setResponse] = React.useState(false);
   const [error, setError] = React.useState(null);
+  const [fieldErrors, setFieldErrors] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
   // Store form render time to check submission speed (bots submit too quickly)
   const [formRenderTime, setFormRenderTime] = React.useState(0);
@@ -22,14 +23,17 @@ export default function ContactPage() {
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting },
+    formState: { errors },
   } = useForm();
 
   const submitForm = async (data) => {
     setIsLoading(true);
     setError(null);
+    setFieldErrors({});
 
     try {
+      console.log('Submitting form to: /.netlify/functions/contact-form');
+      
       // Send form data to our Netlify function endpoint
       const response = await axios.post("/.netlify/functions/contact-form", {
         // Include form field data
@@ -39,23 +43,119 @@ export default function ContactPage() {
         website: data["website"], // Honeypot field
         formRenderTime, // For timing check
       });
+      
+      console.log('Response received:', response.data);
 
       if (response.data.success) {
         setResponse(true);
         reset(); // Reset form fields on success
       } else {
-        setError(
-          response.data.message || "Failed to send message. Please try again."
-        );
+        // Check if we have a field-specific error
+        if (response.data.field) {
+          setFieldErrors({ [response.data.field]: response.data.message });
+        } else {
+          setError(
+            response.data.message || "Failed to send message. Please try again."
+          );
+        }
+        
+        // Log any debug information if available
+        if (response.data.debug) {
+          console.error('Debug info:', response.data.debug);
+        }
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      setError(
-        "An error occurred while sending your message. Please try again later."
-      );
+
+      // Handle axios error responses with status codes
+      if (error.response) {
+        console.error('Response error data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        
+        const responseData = error.response.data;
+
+        // Check for field-specific validation errors
+        if (responseData.field) {
+          setFieldErrors({ [responseData.field]: responseData.message });
+        } else {
+          setError(
+            responseData.message ||
+              `Error ${error.response.status}: An error occurred while sending your message.`
+          );
+        }
+        
+        // Log any debug information if available
+        if (responseData.debug) {
+          console.error('Debug info:', responseData.debug);
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received:', error.request);
+        setError(
+          "Unable to connect to our server. Please check your internet connection and try again."
+        );
+      } else {
+        // Something happened in setting up the request
+        console.error('Request setup error:', error.message);
+        setError("An unexpected error occurred. Please try again later.");
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Helper function to determine if a field has an error
+  const hasFieldError = (fieldName) => {
+    const apiField =
+      fieldName === "your-name"
+        ? "name"
+        : fieldName === "your-email"
+        ? "email"
+        : fieldName === "your-message"
+        ? "message"
+        : null;
+
+    return errors[fieldName] || (apiField && fieldErrors[apiField]);
+  };
+
+  // Get error message for a specific field
+  const getFieldErrorMessage = (fieldName) => {
+    const apiField =
+      fieldName === "your-name"
+        ? "name"
+        : fieldName === "your-email"
+        ? "email"
+        : fieldName === "your-message"
+        ? "message"
+        : null;
+
+    if (apiField && fieldErrors[apiField]) {
+      return fieldErrors[apiField];
+    }
+
+    if (errors[fieldName]) {
+      if (fieldName === "your-name") {
+        return errors[fieldName].type === "required"
+          ? "Please enter your name"
+          : errors[fieldName].type === "minLength"
+          ? "Your name must be at least 3 characters"
+          : "Invalid name";
+      }
+      if (fieldName === "your-email") {
+        return errors[fieldName].type === "required"
+          ? "Please enter your email address"
+          : "Please enter a valid email address";
+      }
+      if (fieldName === "your-message") {
+        return errors[fieldName].type === "required"
+          ? "Please enter a message"
+          : errors[fieldName].type === "minLength"
+          ? "Your message must be at least 5 characters"
+          : "Invalid message";
+      }
+    }
+
+    return null;
   };
 
   return (
@@ -89,7 +189,9 @@ export default function ContactPage() {
                       <div className="mb-3">
                         <input
                           id="name-2"
-                          className="form-control"
+                          className={`form-control ${
+                            hasFieldError("your-name") ? "is-invalid" : ""
+                          }`}
                           type="text"
                           placeholder="Name"
                           {...register("your-name", {
@@ -97,20 +199,34 @@ export default function ContactPage() {
                             minLength: 3,
                           })}
                         />
+                        {hasFieldError("your-name") && (
+                          <div className="invalid-feedback">
+                            {getFieldErrorMessage("your-name")}
+                          </div>
+                        )}
                       </div>
                       <div className="mb-3">
                         <input
                           id="email-2"
-                          className="form-control"
+                          className={`form-control ${
+                            hasFieldError("your-email") ? "is-invalid" : ""
+                          }`}
                           type="email"
                           placeholder="Email"
                           {...register("your-email", { required: true })}
                         />
+                        {hasFieldError("your-email") && (
+                          <div className="invalid-feedback">
+                            {getFieldErrorMessage("your-email")}
+                          </div>
+                        )}
                       </div>
                       <div className="mb-3">
                         <textarea
                           id="message-2"
-                          className="form-control"
+                          className={`form-control ${
+                            hasFieldError("your-message") ? "is-invalid" : ""
+                          }`}
                           rows={6}
                           placeholder="Message"
                           {...register("your-message", {
@@ -118,6 +234,11 @@ export default function ContactPage() {
                             minLength: 5,
                           })}
                         />
+                        {hasFieldError("your-message") && (
+                          <div className="invalid-feedback">
+                            {getFieldErrorMessage("your-message")}
+                          </div>
+                        )}
                       </div>
                       {/* ========== ANTI-SPAM MEASURE #1: HONEYPOT FIELD ========== */}
                       {/* This is an invisible field that humans won't see or fill out */}
@@ -134,14 +255,14 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <button
-                          disabled={isSubmitting || isLoading}
+                          disabled={isLoading}
                           className="btn btn-secondary btn-lg d-block w-100"
                           type="submit"
                         >
-                          {(isSubmitting || isLoading) && (
+                          {isLoading && (
                             <span className="spinner-border spinner-border-sm mx-2"></span>
                           )}
-                          Send!
+                          {isLoading ? "Sending..." : "Send!"}
                         </button>
                       </div>
                     </form>
