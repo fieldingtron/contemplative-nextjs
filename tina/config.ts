@@ -1,5 +1,6 @@
 import { defineConfig } from "tinacms";
 import { TinaCMS, Form } from 'tinacms'
+// Trigger TinaCloud reindex: minor non-functional change.
 
 
 // Your hosting provider likely exposes this as an environment variable
