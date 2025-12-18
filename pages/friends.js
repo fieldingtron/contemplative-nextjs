@@ -2,7 +2,6 @@ import Layout from '../components/Layout'
 import Link from 'next/link'
 import axios from 'axios'
 import csvtojson from 'csvtojson'
-import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../components/CloudBackgroundOrange'
 
 export default function friends({ links }) {
@@ -10,8 +9,7 @@ export default function friends({ links }) {
   //console.log(links)
 
   return (
-    <Layout>
-      <NextSeo title='List of Friends' />
+    <Layout title='List of Friends'>
       <main>
         <CloudBackgroundOrange />
 

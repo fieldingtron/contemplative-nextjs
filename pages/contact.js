@@ -4,7 +4,6 @@ import Layout from "../components/Layout";
 import axios from "axios";
 import EmailSent from "../components/EmailSent";
 import { useForm } from "react-hook-form";
-import { NextSeo } from "next-seo";
 
 export default function ContactPage() {
   const [response, setResponse] = React.useState(false);
@@ -159,8 +158,7 @@ export default function ContactPage() {
   };
 
   return (
-    <Layout>
-      <NextSeo title="Contact Page" />
+    <Layout title="Contact Page">
       <main>
         <CloudBackgroundOrange />
         <section className="position-relative py-4 py-xl-5">

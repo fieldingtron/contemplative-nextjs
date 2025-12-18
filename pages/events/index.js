@@ -3,8 +3,8 @@ import moment from 'moment'
 import Image from 'next/legacy/image'
 import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import EventSummary from '../../components/EventSummary'
-import { NextSeo } from 'next-seo'
-import { client } from '../../tina/__generated__/client' // Adjust path based on your TinaCMS setup
+import fs from 'fs'
+import path from 'path'
 
 export default function Events({ events }) {
   //console.log('data received')
@@ -20,8 +20,7 @@ export default function Events({ events }) {
   const upcomingEvents = events.filter((event) => event.date > date).length
 
   return (
-    <Layout>
-      <NextSeo title='Upcoming and Past Events' />
+    <Layout title='Upcoming and Past Events'>
       <main>
         <Image
           src={sunsetPic}
@@ -63,13 +62,38 @@ export default function Events({ events }) {
 }
 
 export async function getStaticProps() {
-  // Use the pre-generated TinaCMS client to fetch the data
-  const { data } = await client.queries.eventsConnection()
-  //console.log(data.eventsConnection.edges)
+  const eventsDir = path.join(process.cwd(), 'content', 'events')
+  const files = fs.readdirSync(eventsDir)
+
+  const events = files
+    .filter((f) => f.endsWith('.mdx'))
+    .map((filename) => {
+      const fullPath = path.join(eventsDir, filename)
+      const raw = fs.readFileSync(fullPath, 'utf8')
+      const match = raw.match(/^---\n([\s\S]*?)\n---/)
+      let meta = {}
+      if (match) {
+        try {
+          meta = JSON.parse(match[1])
+        } catch (e) {
+          meta = {}
+        }
+      }
+      const slug = filename.replace(/\.mdx$/, '')
+      return {
+        id: `${slug}.mdx`,
+        title: meta.title || slug,
+        date: meta.date || '',
+        subtitle: meta.subtitle || '',
+        subtitle2: meta.subtitle2 || '',
+        subtitle3: meta.subtitle3 || '',
+        featuredImage: meta.featuredImage || '/img/blue-mandala.png',
+      }
+    })
 
   return {
     props: {
-      events: data.eventsConnection.edges.map((edge) => edge.node),
+      events,
     },
   }
 }

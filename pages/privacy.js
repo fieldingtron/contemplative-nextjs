@@ -1,11 +1,9 @@
 import Layout from '../components/Layout'
-import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../components/CloudBackgroundOrange'
 
 export default function Home() {
   return (
-    <Layout>
-      <NextSeo title='Privacy Policy' />
+    <Layout title='Privacy Policy'>
 
       <main>
         <CloudBackgroundOrange />

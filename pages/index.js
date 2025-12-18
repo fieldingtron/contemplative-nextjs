@@ -1,12 +1,10 @@
 import Layout from '../components/Layout'
 import Link from 'next/link'
 import CloudBackgroundBlue from '../components/CloudBackgroundBlue'
-import { NextSeo } from 'next-seo'
 
 export default function Home() {
   return (
-    <Layout>
-      <NextSeo description='Online and In Person Retreats' />
+    <Layout description='Online and In Person Retreats'>
       <main className='d-flex justify-content-center align-items-center'>
         <CloudBackgroundBlue />
         <div

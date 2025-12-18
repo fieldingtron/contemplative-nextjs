@@ -1,5 +1,4 @@
 import Layout from '../../components/Layout'
-import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 import Image from 'next/legacy/image'
 import { client } from '../../tina/__generated__/client' // Adjust path if needed
@@ -13,8 +12,7 @@ export default function Direction({ data }) {
   }
 
   return (
-    <Layout>
-      <NextSeo title={data.title || 'Untitled'} />
+    <Layout title={data.title || 'Untitled'}>
       <main>
         <CloudBackgroundOrange />
 
@@ -74,21 +72,15 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-  console.log('Fetching paths...')
-
-  try {
-    const { data } = await client.queries.directionConnection()
-
-    const paths = data.directionConnection.edges.map((post) => ({
-      params: { slug: post.node._sys.filename.replace('.mdx', '') },
+  const fs = (await import('fs')).default
+  const path = (await import('path')).default
+  const dirDir = path.join(process.cwd(), 'content', 'direction')
+  const files = fs.readdirSync(dirDir)
+  const paths = files
+    .filter((f) => f.endsWith('.mdx'))
+    .map((filename) => ({
+      params: { slug: filename.replace(/\.mdx$/, '') },
     }))
 
-    return {
-      paths,
-      fallback: false, // Adjust fallback mode as needed
-    }
-  } catch (error) {
-    console.error('Error fetching paths:', error)
-    return { paths: [], fallback: false } // Handle errors gracefully
-  }
+  return { paths, fallback: false }
 }

@@ -1,6 +1,5 @@
 import Layout from '../../components/Layout'
 import moment from 'moment'
-import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 import Image from 'next/legacy/image'
 import { client } from '../../tina/__generated__/client'
@@ -13,8 +12,7 @@ export default function Art({ article }) {
   const { API_URL } = process.env
 
   return (
-    <Layout>
-      <NextSeo title={article.title} />
+    <Layout title={article.title}>
       <main>
         <CloudBackgroundOrange />
 

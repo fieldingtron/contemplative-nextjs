@@ -1,6 +1,7 @@
 import Layout from '../../components/Layout'
 import ArticleSummary from '../../components/ArticleSummary'
-import { NextSeo } from 'next-seo'
+import fs from 'fs'
+import path from 'path'
 
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 import { client } from '../../tina/__generated__/client'
@@ -12,8 +13,7 @@ export default function Articles({ articles }) {
   //console.log(articles)
   //console.log(event)
   return (
-    <Layout>
-      <NextSeo title='List of Articles' />
+    <Layout title='List of Articles'>
       <main>
         <CloudBackgroundOrange />
 
@@ -41,11 +41,40 @@ export default function Articles({ articles }) {
 }
 
 export async function getStaticProps() {
-  const { data } = await client.queries.articleConnection()
+  const articlesDir = path.join(process.cwd(), 'content', 'articles')
+  const files = fs.readdirSync(articlesDir)
+
+  const articles = files
+    .filter((f) => f.endsWith('.mdx'))
+    .map((filename) => {
+      const fullPath = path.join(articlesDir, filename)
+      const raw = fs.readFileSync(fullPath, 'utf8')
+      // Extract JSON frontmatter between first two --- lines
+      const match = raw.match(/^---\n([\s\S]*?)\n---/) // non-greedy
+      let meta = {}
+      if (match) {
+        try {
+          meta = JSON.parse(match[1])
+        } catch (e) {
+          meta = {}
+        }
+      }
+      const body = raw.replace(/^---[\s\S]*?---\n/, '')
+      const excerpt = body.trim().split('\n\n')[0] || ''
+      const slug = filename.replace(/\.mdx$/, '')
+      return {
+        id: `${slug}.mdx`,
+        slug,
+        title: meta.title || slug,
+        date: meta.date || '',
+        featuredImage: meta.featuredImage || '/img/blue-mandala.png',
+        excerpt,
+      }
+    })
 
   return {
     props: {
-      articles: data.articleConnection.edges.map((edge) => edge.node),
+      articles,
     },
   }
 }

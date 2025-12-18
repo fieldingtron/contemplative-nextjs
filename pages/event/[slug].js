@@ -1,5 +1,4 @@
 import Layout from '../../components/Layout'
-import { NextSeo } from 'next-seo'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -10,8 +9,7 @@ export default function Evt({ event }) {
   // console.log('event')
   // console.log(event)
   return (
-    <Layout>
-      <NextSeo title={event.title} />
+    <Layout title={event.title}>
 
       <main>
         <CloudBackgroundOrange />
@@ -88,15 +86,15 @@ export async function getStaticProps({ params }) {
 
 // Fetch all event slugs for static paths
 export async function getStaticPaths() {
-  // Fetch all articles or posts to generate paths
-  const { data } = await client.queries.eventsConnection()
-
-  // Map the data to generate dynamic paths based on slugs
-  const paths = data.eventsConnection.edges.map((post) => ({
-    params: { slug: post.node._sys.filename }, // Assumes your slug matches the filename
-  }))
-  // console.log('paths')
-  // console.log(paths)
+  const fs = (await import('fs')).default
+  const path = (await import('path')).default
+  const eventsDir = path.join(process.cwd(), 'content', 'events')
+  const files = fs.readdirSync(eventsDir)
+  const paths = files
+    .filter((f) => f.endsWith('.mdx'))
+    .map((filename) => ({
+      params: { slug: filename.replace(/\.mdx$/, '') },
+    }))
 
   return {
     paths,
