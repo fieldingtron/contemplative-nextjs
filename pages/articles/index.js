@@ -4,7 +4,6 @@ import fs from 'fs'
 import path from 'path'
 
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
-import { client } from '../../tina/__generated__/client'
 
 export default function Articles({ articles }) {
   // console.log('data received')

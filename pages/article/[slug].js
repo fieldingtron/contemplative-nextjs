@@ -2,15 +2,11 @@ import Layout from '../../components/Layout'
 import moment from 'moment'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 import Image from 'next/legacy/image'
-import { client } from '../../tina/__generated__/client'
-import { TinaMarkdown } from 'tinacms/dist/rich-text'
+import fs from 'fs'
+import path from 'path'
+import { marked } from 'marked'
 
 export default function Art({ article }) {
-  //console.log(' articlez received')
-  //console.log(article)
-
-  const { API_URL } = process.env
-
   return (
     <Layout title={article.title}>
       <main>
@@ -40,7 +36,10 @@ export default function Art({ article }) {
           </div>
 
           <div className='fs-4 my-2 mx-sm-2 mx-md-3'>
-            <TinaMarkdown content={article.body} />
+            <div
+              className='fs-4'
+              dangerouslySetInnerHTML={{ __html: article.html }}
+            />
           </div>
         </div>
       </main>
@@ -49,28 +48,44 @@ export default function Art({ article }) {
 }
 
 export async function getStaticProps({ params }) {
-  // Fetch the article dynamically using the slug from the URL
-  const relativePath = `${params.slug}.mdx` // Assuming your files have a .md extension
-  const { data } = await client.queries.article({ relativePath })
-  //console.log(data)
+  const articlesDir = path.join(process.cwd(), 'content', 'articles')
+  const fullPath = path.join(articlesDir, `${params.slug}.mdx`)
+  const raw = fs.readFileSync(fullPath, 'utf8')
+
+  const match = raw.match(/^---\n([\s\S]*?)\n---/)
+  let meta = {}
+  if (match) {
+    try {
+      meta = JSON.parse(match[1])
+    } catch (e) {
+      meta = {}
+    }
+  }
+  const body = raw.replace(/^---[\s\S]*?---\n/, '')
+  const html = marked.parse(body)
+  const article = {
+    title: meta.title || params.slug,
+    date: meta.date || '',
+    featuredImage: meta.featuredImage || '/img/blue-mandala.png',
+    body,
+    html,
+  }
 
   return {
     props: {
-      article: data.article,
+      article,
     },
   }
 }
 
 export async function getStaticPaths() {
-  // Fetch all articles or posts to generate paths
-  const { data } = await client.queries.articleConnection()
-
-  // Map the data to generate dynamic paths based on slugs
-  const paths = data.articleConnection.edges.map((post) => ({
-    params: { slug: post.node._sys.filename }, // Assumes your slug matches the filename
-  }))
-  console.log('paths')
-  console.log(paths)
+  const articlesDir = path.join(process.cwd(), 'content', 'articles')
+  const files = fs.readdirSync(articlesDir)
+  const paths = files
+    .filter((f) => f.endsWith('.mdx'))
+    .map((filename) => ({
+      params: { slug: filename.replace(/\.mdx$/, '') },
+    }))
 
   return {
     paths,

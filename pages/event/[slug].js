@@ -2,8 +2,9 @@ import Layout from '../../components/Layout'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { client } from '../../tina/__generated__/client' // Import the Tina client
-import { TinaMarkdown } from 'tinacms/dist/rich-text'
+import fs from 'fs'
+import path from 'path'
+import { marked } from 'marked'
 
 export default function Evt({ event }) {
   // console.log('event')
@@ -45,7 +46,10 @@ export default function Evt({ event }) {
             </div>
           </div>
           <div className='fs-5 my-2 mx-sm-2 mx-md-3'>
-            <TinaMarkdown content={event.body} />
+            <div
+              className='fs-5'
+              dangerouslySetInnerHTML={{ __html: event.html }}
+            />
           </div>
 
           {event.registerurl && (
@@ -63,24 +67,37 @@ export default function Evt({ event }) {
   )
 }
 
-// Fetch data for a single event using TinaCMS queries
 export async function getStaticProps({ params }) {
-  try {
-    // Use the Tina client to fetch the event by slug
-    const { data } = await client.queries.events({
-      relativePath: `${params.slug}.mdx`,
-    })
+  const eventsDir = path.join(process.cwd(), 'content', 'events')
+  const fullPath = path.join(eventsDir, `${params.slug}.mdx`)
+  const raw = fs.readFileSync(fullPath, 'utf8')
 
-    return {
-      props: {
-        event: data.events, // The event data is directly returned from TinaCMS
-      },
+  const match = raw.match(/^---\n([\s\S]*?)\n---/)
+  let meta = {}
+  if (match) {
+    try {
+      meta = JSON.parse(match[1])
+    } catch (e) {
+      meta = {}
     }
-  } catch (error) {
-    console.error('Error fetching event from TinaCMS:', error)
-    return {
-      notFound: true,
-    }
+  }
+  const body = raw.replace(/^---[\s\S]*?---\n/, '')
+  const html = marked.parse(body)
+  const event = {
+    title: meta.title || params.slug,
+    subtitle: meta.subtitle || '',
+    subtitle2: meta.subtitle2 || '',
+    subtitle3: meta.subtitle3 || '',
+    featuredImage: meta.featuredImage || '/img/blue-mandala.png',
+    registerurl: meta.registerurl || '',
+    body,
+    html,
+  }
+
+  return {
+    props: {
+      event,
+    },
   }
 }
 

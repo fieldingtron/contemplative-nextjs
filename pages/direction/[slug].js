@@ -1,12 +1,11 @@
 import Layout from '../../components/Layout'
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 import Image from 'next/legacy/image'
-import { client } from '../../tina/__generated__/client' // Adjust path if needed
-import { TinaMarkdown } from 'tinacms/dist/rich-text'
+import fs from 'fs'
+import path from 'path'
+import { marked } from 'marked'
 
 export default function Direction({ data }) {
-  console.log('Client:', client)
-
   if (!data) {
     return <p>Data not available.</p> // Handle missing data gracefully
   }
@@ -39,7 +38,10 @@ export default function Direction({ data }) {
             dangerouslySetInnerHTML={{ __html: data.content || '' }}
             className='fs-5 my-2 mx-sm-2 mx-md-3'
           /> */}
-          <TinaMarkdown content={data.body} />
+          <div
+            className='fs-5 my-2 mx-sm-2 mx-md-3'
+            dangerouslySetInnerHTML={{ __html: data.html }}
+          />
         </div>
       </main>
     </Layout>
@@ -47,27 +49,32 @@ export default function Direction({ data }) {
 }
 
 export async function getStaticProps({ params }) {
-  console.log('Params:', params)
+  const dirDir = path.join(process.cwd(), 'content', 'direction')
+  const fullPath = path.join(dirDir, `${params.slug}.mdx`)
+  const raw = fs.readFileSync(fullPath, 'utf8')
 
-  try {
-    const { data } = await client.queries.direction({
-      relativePath: `${params.slug}.mdx`, // Ensure correct slug-to-path mapping
-    })
-
-    if (!data || !data.direction) {
-      console.warn('No data found for slug:', params.slug)
-      console.log(data)
-      return { notFound: true } // Return 404 if data is missing
+  const match = raw.match(/^---\n([\s\S]*?)\n---/)
+  let meta = {}
+  if (match) {
+    try {
+      meta = JSON.parse(match[1])
+    } catch (e) {
+      meta = {}
     }
+  }
+  const body = raw.replace(/^---[\s\S]*?---\n/, '')
+  const html = marked.parse(body)
+  const data = {
+    title: meta.title || params.slug,
+    featuredImage: meta.featuredImage || '/img/blue-mandala.png',
+    body,
+    html,
+  }
 
-    return {
-      props: {
-        data: JSON.parse(JSON.stringify(data.direction)), // Handle serialization issues
-      },
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error)
-    return { notFound: true } // Fallback to 404 if there's an error
+  return {
+    props: {
+      data,
+    },
   }
 }
 
