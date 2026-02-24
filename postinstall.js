@@ -4,29 +4,31 @@ const readline = require("node:readline");
 // Add dotenv require
 const dotenv = require("dotenv");
 
-// Load environment variables from .env.local if it exists
+// Load environment variables from .env if it exists
 if (fs.existsSync(".env")) {
   dotenv.config({ path: ".env" });
 }
 
-// Check if running in production based on CONTEXT or VERCEL_ENV
-if (
+const isNonInteractive =
+  process.env.CI === "true" ||
+  process.env.VERCEL === "1" ||
+  !process.stdin.isTTY ||
+  !process.stdout.isTTY;
+
+const shouldSkipEncryption =
+  isNonInteractive ||
   process.env.VERCEL_ENV?.toLowerCase() === "production" ||
-  process.env.CONTEXT?.toLowerCase() === "production"
-) {
+  process.env.CONTEXT?.toLowerCase() === "production";
+
+if (shouldSkipEncryption) {
   console.log(
-    "Production environment detected. Skipping encryption/decryption."
+    "Skipping env encryption/decryption in CI/Vercel/non-interactive or production environment."
   );
-  process.exit(0); // Exit the script without running any further
+  process.exit(0);
 }
 
-// Continue with the rest of your script if not in production
-console.log(
-  "Not in production environment. Proceeding with encryption/decryption."
-);
-
-console.log("process.env");
-console.log(process.env);
+// Continue with the rest of your script if not in production/non-interactive
+console.log("Interactive local environment detected. Proceeding with env handling.");
 
 // Helper function to prompt for a password
 function promptPassword(question) {
@@ -100,9 +102,7 @@ async function decryptFile(password) {
     try {
       await decryptFile(password);
     } catch (error) {
-      console.error(
-        "Decryption failed. Please check the password and try again."
-      );
+      console.error("Decryption failed. Please check the password and try again.");
     }
   } else {
     console.log(

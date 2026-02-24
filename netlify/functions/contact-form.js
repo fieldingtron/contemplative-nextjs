@@ -3,6 +3,24 @@
 
 const { Resend } = require("resend");
 
+const rateLimitStore = new Map();
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX_ATTEMPTS = 5;
+const MAX_MESSAGE_LENGTH = 3000;
+const MAX_NAME_LENGTH = 100;
+const MAX_EMAIL_LENGTH = 254;
+
+const spamPatterns = [
+  /\bseo\b/i,
+  /\bcasino\b/i,
+  /\bviagra\b/i,
+  /\bcrypto\b/i,
+  /\b(?:buy|sell)\s+followers\b/i,
+  /\bpayday\s+loan\b/i,
+  /\bwork\s+from\s+home\b/i,
+  /\bclick\s+here\b/i,
+];
+
 // Enhanced logging helper
 const logDebugInfo = (message, data = {}) => {
   const timestamp = new Date().toISOString();
@@ -12,13 +30,47 @@ const logDebugInfo = (message, data = {}) => {
   }
 };
 
+const getClientIp = (headers = {}) => {
+  const forwardedFor = headers["x-forwarded-for"];
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim();
+  }
+
+  return headers["client-ip"] || "unknown";
+};
+
+const isRateLimited = (clientIp) => {
+  const now = Date.now();
+  const attempts = rateLimitStore.get(clientIp) || [];
+
+  const recentAttempts = attempts.filter(
+    (timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS
+  );
+
+  recentAttempts.push(now);
+  rateLimitStore.set(clientIp, recentAttempts);
+
+  return recentAttempts.length > RATE_LIMIT_MAX_ATTEMPTS;
+};
+
+const shouldFlagAsSpam = ({ name, message }) => {
+  const combinedText = `${name} ${message}`;
+  const urlCount = (combinedText.match(/https?:\/\//gi) || []).length;
+
+  if (urlCount > 2) {
+    return true;
+  }
+
+  return spamPatterns.some((pattern) => pattern.test(combinedText));
+};
+
 // Handler for Netlify serverless function
 exports.handler = async (event, context) => {
   // Debug log: Function invoked
   logDebugInfo("Contact form function invoked", {
     httpMethod: event.httpMethod,
     path: event.path,
-    headers: event.headers,
+    clientIp: getClientIp(event.headers),
   });
 
   // Only allow POST requests
@@ -37,18 +89,36 @@ exports.handler = async (event, context) => {
     // Parse the incoming request body
     logDebugInfo("Parsing request body");
     const data = JSON.parse(event.body);
+    const clientIp = getClientIp(event.headers);
+
+    if (isRateLimited(clientIp)) {
+      logDebugInfo("Rate limit exceeded", { clientIp });
+      return {
+        statusCode: 429,
+        body: JSON.stringify({
+          success: false,
+          message:
+            "Too many form submissions detected. Please wait a few minutes and try again.",
+        }),
+      };
+    }
+
     logDebugInfo("Request data received", {
       hasName: !!data.name,
       hasEmail: !!data.email,
       hasMessage: !!data.message,
       hasHoneypot: !!data.website,
+      hasCompanyHoneypot: !!data.company,
       hasTimestamp: !!data.formRenderTime,
     });
 
     // ========== ANTI-SPAM MEASURES ==========
 
     // 1. Honeypot check - If the honeypot field (website) is filled, reject as spam
-    if (data.website && data.website.trim() !== "") {
+    if (
+      (data.website && data.website.trim() !== "") ||
+      (data.company && data.company.trim() !== "")
+    ) {
       logDebugInfo("Honeypot field was filled - likely spam");
       // Return success to the bot but don't actually send email
       return {
@@ -71,7 +141,11 @@ exports.handler = async (event, context) => {
       timeSpentOnForm: `${timeSpentOnForm}ms`,
     });
 
-    if (timeSpentOnForm < 3000) {
+    if (
+      Number.isNaN(timeSpentOnForm) ||
+      timeSpentOnForm < 3000 ||
+      timeSpentOnForm > 2 * 60 * 60 * 1000
+    ) {
       logDebugInfo("Form submitted too quickly - likely spam", {
         timeSpentOnForm: `${timeSpentOnForm}ms`,
       });
@@ -101,6 +175,20 @@ exports.handler = async (event, context) => {
       };
     }
 
+    if (name.length > MAX_NAME_LENGTH) {
+      logDebugInfo("Validation failed: name too long", {
+        length: name.length,
+      });
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          success: false,
+          field: "name",
+          message: "Name is too long.",
+        }),
+      };
+    }
+
     if (!email) {
       logDebugInfo("Validation failed: missing email");
       return {
@@ -109,6 +197,20 @@ exports.handler = async (event, context) => {
           success: false,
           field: "email",
           message: "Please provide a valid email address.",
+        }),
+      };
+    }
+
+    if (email.length > MAX_EMAIL_LENGTH) {
+      logDebugInfo("Validation failed: email too long", {
+        length: email.length,
+      });
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          success: false,
+          field: "email",
+          message: "Email address is too long.",
         }),
       };
     }
@@ -140,6 +242,21 @@ exports.handler = async (event, context) => {
       };
     }
 
+    if (message.length > MAX_MESSAGE_LENGTH) {
+      logDebugInfo("Validation failed: message too long", {
+        length: message.length,
+      });
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          success: false,
+          field: "message",
+          message:
+            "Your message is too long. Please shorten it and try again.",
+        }),
+      };
+    }
+
     if (message.length < 5) {
       logDebugInfo("Validation failed: message too short", {
         length: message.length,
@@ -150,6 +267,19 @@ exports.handler = async (event, context) => {
           success: false,
           field: "message",
           message: "Your message is too short. Please provide more details.",
+        }),
+      };
+    }
+
+    if (shouldFlagAsSpam({ name, message })) {
+      logDebugInfo("Message matched spam heuristics", {
+        clientIp,
+      });
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          success: true,
+          message: "Form submission received",
         }),
       };
     }

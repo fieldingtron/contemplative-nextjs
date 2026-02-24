@@ -66,15 +66,18 @@ export async function getStaticProps() {
       return await axios.get(csvURL)
     } catch (error) {
       console.error(error)
+      return null
     }
   }
 
   const linkInfo = async () => {
     const links = await getLinks()
-    if (links.data) {
+    if (links?.data) {
       const jsonArray = await csvtojson().fromString(links.data)
       return jsonArray
     }
+
+    return []
   }
 
   const linkz = await linkInfo()
