@@ -60,20 +60,32 @@ export default function friends({ links }) {
 export async function getStaticProps() {
   const csvURL = process.env.CSV_URL
 
+  if (!csvURL) {
+    console.warn('CSV_URL is not set. Rendering friends-google-docs with empty links.')
+    return {
+      props: {
+        links: [],
+      },
+    }
+  }
+
   const getLinks = async () => {
     try {
       return await axios.get(csvURL)
     } catch (error) {
       console.error(error)
+      return null
     }
   }
 
   const linkInfo = async () => {
     const links = await getLinks()
-    if (links.data) {
+    if (links?.data) {
       const jsonArray = await csvtojson().fromString(links.data)
       return jsonArray
     }
+
+    return []
   }
 
   const linkz = await linkInfo()

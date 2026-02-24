@@ -40,6 +40,7 @@ export default function ContactPage() {
         email: data["your-email"],
         message: data["your-message"],
         website: data["website"], // Honeypot field
+        company: data["company"], // Secondary honeypot field
         formRenderTime, // For timing check
       });
 
@@ -249,6 +250,14 @@ export default function ContactPage() {
                           autoComplete="off"
                           tabIndex="-1"
                           {...register("website")}
+                        />
+                        <input
+                          id="company"
+                          className="form-control"
+                          type="text"
+                          autoComplete="off"
+                          tabIndex="-1"
+                          {...register("company")}
                         />
                       </div>
                       <div>
