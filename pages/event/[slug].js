@@ -5,48 +5,44 @@ import Link from 'next/link'
 import fs from 'fs'
 import path from 'path'
 import { marked } from 'marked'
+import { parseFrontmatter } from '../../lib/frontmatter'
 
 export default function Evt({ event }) {
-  // console.log('event')
-  // console.log(event)
   return (
     <Layout title={event.title}>
-
       <main>
         <CloudBackgroundOrange />
-        <div className='container py-3 position-relative'>
-          <h3 className='text-center hero-text text-black-50'>
-            <span style={{ color: 'rgb(61, 89, 122)' }}>{event.title}</span>
-            <br />
-          </h3>
-          <div className='row py-3'>
-            <div className='col-md-4 text-center p-1'>
-              <Image
-                alt={event.title}
-                src={event.featuredImage}
-                height={200}
-                width={200}
-                style={{ objectFit: 'cover', objectPosition: 'center' }}
-                quality={100}
-                className='rounded-circle img-fluid'
-              />
+        <div className='container py-4 position-relative event-detail-page'>
+          <section className='event-detail-hero'>
+            <div className='event-detail-hero__image'>
+              <span className='event-circle-image event-circle-image--large'>
+                <Image
+                  alt={event.title}
+                  src={event.featuredImage}
+                  height={320}
+                  width={320}
+                  style={{ objectFit: 'cover', objectPosition: 'center' }}
+                  quality={100}
+                  className='event-circle-image__img'
+                />
+              </span>
             </div>
-            <div className='col-md-8 d-flex flex-column justify-content-center align-items-center align-items-md-start p-4'>
-              <h4 className='text-start'>{event.title}</h4>
+            <div className='event-detail-hero__content'>
+              <h1 className='event-detail-title'>{event.title}</h1>
               {event.subtitle && (
-                <h4 className='text-start'>{event.subtitle}</h4>
+                <p className='event-summary__subtitle'>{event.subtitle}</p>
               )}
               {event.subtitle2 && (
-                <h4 className='text-start'>{event.subtitle2}</h4>
+                <p className='event-summary__detail'>{event.subtitle2}</p>
               )}
               {event.subtitle3 && (
-                <h4 className='text-start'>{event.subtitle3}</h4>
+                <p className='event-summary__detail'>{event.subtitle3}</p>
               )}
             </div>
-          </div>
-          <div className='fs-5 my-2 mx-sm-2 mx-md-3'>
+          </section>
+
+          <div className='event-detail-body'>
             <div
-              className='fs-5'
               dangerouslySetInnerHTML={{ __html: event.html }}
             />
           </div>
@@ -71,16 +67,7 @@ export async function getStaticProps({ params }) {
   const fullPath = path.join(eventsDir, `${params.slug}.mdx`)
   const raw = fs.readFileSync(fullPath, 'utf8')
 
-  const match = raw.match(/^---\n([\s\S]*?)\n---/)
-  let meta = {}
-  if (match) {
-    try {
-      meta = JSON.parse(match[1])
-    } catch (e) {
-      meta = {}
-    }
-  }
-  const body = raw.replace(/^---[\s\S]*?---\n/, '')
+  const { meta, body } = parseFrontmatter(raw)
   const html = marked.parse(body)
   const event = {
     title: meta.title || params.slug,

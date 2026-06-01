@@ -78,7 +78,6 @@ Email delivery is handled with Resend.
 Typical local variables used by this app:
 
 - DOMAIN_URLS
-- TINA_PUBLIC_IS_LOCAL
 - NEXT_PUBLIC_TINA_CLIENT_ID
 - TINA_TOKEN
 - RESEND_API_KEY
@@ -87,7 +86,6 @@ Typical local variables used by this app:
 - NEXT_PUBLIC_TURNSTILE_SITE_KEY
 - TURNSTILE_SECRET_KEY
 - TURNSTILE_ALLOWED_HOSTNAMES
-- CSV_URL
 
 ## AI Assistant Workflow
 

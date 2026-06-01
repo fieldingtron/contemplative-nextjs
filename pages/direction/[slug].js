@@ -28,7 +28,7 @@ export default function Direction({ data }) {
               width={200}
               style={{ objectFit: 'cover', objectPosition: 'center' }}
               quality={100}
-              className='rounded-circle img-fluid'
+              className='profile-circle-image__img profile-circle-image__img--framed'
             />
           </div>
 

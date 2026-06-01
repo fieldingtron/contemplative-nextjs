@@ -5,9 +5,6 @@ import csvtojson from 'csvtojson'
 import CloudBackgroundOrange from '../components/CloudBackgroundOrange'
 
 export default function friends({ links }) {
-  const SSKEY = process.env.SPREADSHEET_KEY
-  //console.log(links)
-
   return (
     <Layout title='List of Friends'>
       <main>

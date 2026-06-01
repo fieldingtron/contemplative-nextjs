@@ -6,19 +6,35 @@ import EmailSent from "../components/EmailSent";
 import { useForm } from "react-hook-form";
 import Script from "next/script";
 
+const LOCAL_TURNSTILE_SITE_KEY = "1x00000000000000000000AA";
+const configuredTurnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
 export default function ContactPage() {
   const [response, setResponse] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [fieldErrors, setFieldErrors] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
   const [turnstileToken, setTurnstileToken] = React.useState("");
-  // Store form render time to check submission speed (bots submit too quickly)
+  const [turnstileSiteKey, setTurnstileSiteKey] = React.useState("");
+  const [hasResolvedTurnstileKey, setHasResolvedTurnstileKey] =
+    React.useState(false);
+  const [isLocalhost, setIsLocalhost] = React.useState(false);
   const [formRenderTime, setFormRenderTime] = React.useState(0);
-  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
-  // Set the initial render time when component mounts
   React.useEffect(() => {
     setFormRenderTime(Date.now());
+
+    const hostname = window.location.hostname;
+    const localHostnames = ["localhost", "127.0.0.1", "0.0.0.0", "::1"];
+    const isLocal = localHostnames.includes(hostname);
+
+    setIsLocalhost(isLocal);
+    setTurnstileSiteKey(
+      isLocal
+        ? LOCAL_TURNSTILE_SITE_KEY
+        : configuredTurnstileSiteKey || ""
+    );
+    setHasResolvedTurnstileKey(true);
   }, []);
 
   React.useEffect(() => {
@@ -50,6 +66,36 @@ export default function ContactPage() {
     formState: { errors },
   } = useForm();
 
+  const postContactForm = async (payload) => {
+    const endpoints = isLocalhost
+      ? ["/api/contact"]
+      : ["/api/contact", "/.netlify/functions/contact-form"];
+
+    let lastError = null;
+
+    for (const endpoint of endpoints) {
+      try {
+        console.log(`Submitting form to: ${endpoint}`);
+        const response = await axios.post(endpoint, payload, {
+          validateStatus: () => true,
+        });
+
+        if ([404, 405].includes(response.status) && endpoints.length > 1) {
+          lastError = new Error(`Contact endpoint returned ${response.status}`);
+          continue;
+        }
+
+        return response;
+      } catch (error) {
+        lastError = error;
+
+        throw error;
+      }
+    }
+
+    throw lastError;
+  };
+
   const submitForm = async (data) => {
     if (!turnstileSiteKey) {
       setError(
@@ -68,17 +114,13 @@ export default function ContactPage() {
     setFieldErrors({});
 
     try {
-      console.log("Submitting form to: /.netlify/functions/contact-form");
-
-      // Send form data to our Netlify function endpoint
-      const response = await axios.post("/.netlify/functions/contact-form", {
-        // Include form field data
+      const response = await postContactForm({
         name: data["your-name"],
         email: data["your-email"],
         message: data["your-message"],
-        website: data["website"], // Honeypot field
-        company: data["company"], // Secondary honeypot field
-        formRenderTime, // For timing check
+        website: data["website"],
+        company: data["company"],
+        formRenderTime,
         turnstileToken,
       });
 
@@ -107,7 +149,7 @@ export default function ContactPage() {
         }
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error submitting form:", error.message);
 
       // Handle axios error responses with status codes
       if (error.response) {
@@ -258,7 +300,10 @@ export default function ContactPage() {
                           }`}
                           type="email"
                           placeholder="Email"
-                          {...register("your-email", { required: true })}
+                          {...register("your-email", {
+                            required: true,
+                            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                          })}
                         />
                         {hasFieldError("your-email") && (
                           <div className="invalid-feedback">
@@ -286,8 +331,13 @@ export default function ContactPage() {
                         )}
                       </div>
                       <div className="mb-3 d-flex justify-content-center">
-                        {turnstileSiteKey ? (
+                        {!hasResolvedTurnstileKey ? (
+                          <div className="alert alert-secondary w-100 mb-0" role="status">
+                            Loading verification...
+                          </div>
+                        ) : turnstileSiteKey ? (
                           <div
+                            key={turnstileSiteKey}
                             className="cf-turnstile"
                             data-sitekey={turnstileSiteKey}
                             data-callback="onTurnstileSuccess"

@@ -5,18 +5,89 @@ import sunsetPic from '../../public/img/sunset-clouds.jpg'
 import EventSummary from '../../components/EventSummary'
 import fs from 'fs'
 import path from 'path'
+import { parseFrontmatter } from '../../lib/frontmatter'
+
+const eventListingCopy = {
+  'event-beneath-the-light-we-see': {
+    description: [
+      'Lynne Larson explores how dreams can open a deeper spiritual imagination.',
+      'The event connects dream work with the receptive silence of Centering Prayer.',
+    ],
+    displayDate: 'August 14 and September 11, 2021',
+    price: 'No price listed',
+  },
+  'event-creating-space-for-change': {
+    subtitle: "Practical Exercises for Activating Your Nervous System's Ability to Calm and Heal Itself",
+    description: [
+      'Eric Peter guides practical exercises for calming and healing the nervous system.',
+      'The morning series connects body awareness with a steadier contemplative life.',
+    ],
+    displayDate: 'June 3-27, 2024, Mondays-Thursdays, 6:30-7:30 a.m. MDT',
+    price: 'See registration details',
+  },
+  'event-divine-presence': {
+    description: [
+      'Fr. Bill Sheehan explores how the mystery of Incarnation unfolds in daily life.',
+      'This weekend retreat uses silence, teaching, and prayer to deepen awareness of divine presence.',
+    ],
+    price: '$295 single / $260 double; $170 commuter',
+  },
+  'event-embraced-in-love': {
+    title: 'Embraced in Love',
+    description: [
+      'Fr. Bill Sheehan leads a Zoom retreat on the practice of Centering Prayer.',
+      'The retreat includes teaching, prayer sits, reflection time, and space for questions.',
+    ],
+    displayDate: 'June 3, 2023, 11:00 a.m. - 2:00 p.m. EDT',
+    price: 'See registration details',
+  },
+  'event-julian-of-norwich': {
+    title: 'Julian of Norwich with Lynne Larson',
+    subtitle: 'Retreat at Richmond Hill',
+    description: [
+      'Lynne Larson introduces Julian of Norwich and her enduring vision of divine love.',
+      'The retreat invites reflection on hope, friendship with God, and the promise that all shall be well.',
+    ],
+    price: 'No price listed',
+  },
+  'event-living-a-centered-life-with-father-bill-sheehan-omi': {
+    description: [
+      'Fr. Bill Sheehan reflects on living a centered life amid disruption and change.',
+      'The session points back to the divine indwelling that remains present in every circumstance.',
+    ],
+    price: 'No price listed',
+  },
+  'event-rooted-in-prayer': {
+    title: 'Rooted in Prayer',
+    subtitle: 'Centering Prayer and the Human Condition',
+    description: [
+      'Fr. Bill Sheehan leads a Zoom session on Centering Prayer and the human condition.',
+      'The gathering offers practical teaching for deepening prayer and returning to inner stillness.',
+    ],
+    displayDate: 'Saturday, July 6, 2024, 10:00 a.m. - 2:00 p.m. EDT',
+    price: '$25',
+  },
+}
+
+function getDisplayDate(meta, slug) {
+  if (eventListingCopy[slug]?.displayDate) {
+    return eventListingCopy[slug].displayDate
+  }
+
+  if (meta.subtitle3 && !String(meta.subtitle3).includes('$')) {
+    return meta.subtitle3
+  }
+
+  if (!meta.date) {
+    return ''
+  }
+
+  return moment(meta.date).format('MMMM D, YYYY')
+}
 
 export default function Events({ events }) {
-  //console.log('data received')
-  ///console.log({ events })
-  //console.log('first event received')
-  const event = events[0]
-  // console.log('first event ')
-  // console.log(event)
   const d = new Date()
   const date = moment(d).format('YYYY-MM-DD')
-  const pastEvents = events.filter((event) => event.date <= date).length
-
   const upcomingEvents = events.filter((event) => event.date > date).length
 
   return (
@@ -31,31 +102,34 @@ export default function Events({ events }) {
           priority
         />
 
-        <div className='container py-3'>
+        <div className='container py-4 events-page'>
           {upcomingEvents > 0 && (
-            <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
+            <h1 className='text-center hero-text text-black-50 mb-4'>
               Upcoming Events
             </h1>
           )}
 
-          {upcomingEvents > 0 &&
-            events
-              .filter((event) => event.date >= date)
-              .map((event) => (
-                <EventSummary event={event} key={event.id} value={event.id} />
-                //value={number}
-              ))}
+          {upcomingEvents > 0 && (
+            <div className='event-list'>
+              {events
+                .filter((event) => event.date >= date)
+                .map((event) => (
+                  <EventSummary event={event} key={event.id} value={event.id} />
+                ))}
+            </div>
+          )}
 
-          <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
-            {pastEvents} Past Events
+          <h1 className='text-center hero-text text-black-50 my-4'>
+            Past Events
           </h1>
 
-          {events
-            .filter((event) => event.date < date)
-            .map((event) => (
-              <EventSummary event={event} key={event.id} value={event.id} />
-              //value={number}
-            ))}
+          <div className='event-list'>
+            {events
+              .filter((event) => event.date < date)
+              .map((event) => (
+                <EventSummary event={event} key={event.id} value={event.id} />
+              ))}
+          </div>
         </div>
       </main>
     </Layout>
@@ -71,26 +145,25 @@ export async function getStaticProps() {
     .map((filename) => {
       const fullPath = path.join(eventsDir, filename)
       const raw = fs.readFileSync(fullPath, 'utf8')
-      const match = raw.match(/^---\n([\s\S]*?)\n---/)
-      let meta = {}
-      if (match) {
-        try {
-          meta = JSON.parse(match[1])
-        } catch (e) {
-          meta = {}
-        }
-      }
+      const { meta } = parseFrontmatter(raw)
       const slug = filename.replace(/\.mdx$/, '')
+      const listingCopy = eventListingCopy[slug] || {}
+
       return {
         id: `${slug}.mdx`,
-        title: meta.title || slug,
+        slug,
+        title: listingCopy.title || meta.title || slug,
         date: meta.date || '',
-        subtitle: meta.subtitle || '',
+        displayDate: getDisplayDate(meta, slug),
+        subtitle: listingCopy.subtitle || meta.subtitle || meta.subtitle2 || '',
         subtitle2: meta.subtitle2 || '',
         subtitle3: meta.subtitle3 || '',
+        description: listingCopy.description || [],
+        price: listingCopy.price || 'No price listed',
         featuredImage: meta.featuredImage || '/img/blue-mandala.png',
       }
     })
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
 
   return {
     props: {

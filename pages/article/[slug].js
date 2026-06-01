@@ -5,6 +5,7 @@ import Image from 'next/image'
 import fs from 'fs'
 import path from 'path'
 import { marked } from 'marked'
+import { parseFrontmatter } from '../../lib/frontmatter'
 
 export default function Art({ article }) {
   return (
@@ -50,16 +51,7 @@ export async function getStaticProps({ params }) {
   const fullPath = path.join(articlesDir, `${params.slug}.mdx`)
   const raw = fs.readFileSync(fullPath, 'utf8')
 
-  const match = raw.match(/^---\n([\s\S]*?)\n---/)
-  let meta = {}
-  if (match) {
-    try {
-      meta = JSON.parse(match[1])
-    } catch (e) {
-      meta = {}
-    }
-  }
-  const body = raw.replace(/^---[\s\S]*?---\n/, '')
+  const { meta, body } = parseFrontmatter(raw)
   const html = marked.parse(body)
   const article = {
     title: meta.title || params.slug,

@@ -2,37 +2,26 @@ import Layout from '../../components/Layout'
 import ArticleSummary from '../../components/ArticleSummary'
 import fs from 'fs'
 import path from 'path'
+import { parseFrontmatter } from '../../lib/frontmatter'
 
 import CloudBackgroundOrange from '../../components/CloudBackgroundOrange'
 
 export default function Articles({ articles }) {
-  // console.log('data received')
-  // console.log({ events })
-  //console.log('first article received')
-  //console.log(articles)
-  //console.log(event)
   return (
-    <Layout title='List of Articles'>
+    <Layout title='Articles'>
       <main>
         <CloudBackgroundOrange />
 
-        <div className='container py-3'>
-          <h1 className='text-center hero-text text-black-50 animate__animated animate__shakeX'>
+        <div className='container py-4 articles-page'>
+          <h1 className='text-center hero-text text-black-50 mb-4'>
             Articles
           </h1>
-          {/* <ul>
-            {articles.map((article) => (
-              <li key={article.id}>
-                <h2>{article.title}</h2>
-                <p>{article.subtitle}</p>
-                <time>{new Date(article.date).toLocaleDateString()}</time>
-              </li>
-            ))}
-          </ul> */}
 
-          {articles.map((article) => (
-            <ArticleSummary article={article} key={article.id} />
-          ))}
+          <div className='article-list'>
+            {articles.map((article) => (
+              <ArticleSummary article={article} key={article.id} />
+            ))}
+          </div>
         </div>
       </main>
     </Layout>
@@ -48,18 +37,8 @@ export async function getStaticProps() {
     .map((filename) => {
       const fullPath = path.join(articlesDir, filename)
       const raw = fs.readFileSync(fullPath, 'utf8')
-      // Extract JSON frontmatter between first two --- lines
-      const match = raw.match(/^---\n([\s\S]*?)\n---/) // non-greedy
-      let meta = {}
-      if (match) {
-        try {
-          meta = JSON.parse(match[1])
-        } catch (e) {
-          meta = {}
-        }
-      }
-      const body = raw.replace(/^---[\s\S]*?---\n/, '')
-      const excerpt = body.trim().split('\n\n')[0] || ''
+      const { meta, body } = parseFrontmatter(raw)
+      const excerpt = meta.excerpt || body.trim().split('\n\n')[0] || ''
       const slug = filename.replace(/\.mdx$/, '')
       return {
         id: `${slug}.mdx`,
@@ -70,6 +49,7 @@ export async function getStaticProps() {
         excerpt,
       }
     })
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
 
   return {
     props: {

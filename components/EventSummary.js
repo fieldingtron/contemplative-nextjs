@@ -1,49 +1,48 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import profilePic from '../public/img/blue-mandala.png'
 
 export default function EventSummary({ event }) {
-  //console.log({ event })
-  event.url = `/event/${event.id}`
-    .replace('.mdx', '/')
-    .replace('/content/events', '')
-  //.replace('/events//events/', '')
-  //console.log({ event })
+  const eventUrl = `/event/${event.slug || event.id.replace('.mdx', '')}`
+
   return (
-    <div className='row py-2'>
-      <div className='col-md-4 text-center p-1'>
-        {
-          <Link href={`${event.url}`}>
-            <Image
-              alt={event.title}
-              src={event.featuredImage}
-              height={200}
-              width={200}
-              style={{ objectFit: 'cover', objectPosition: 'center' }}
-              quality={100}
-              className='rounded-circle img-fluid'
-            />
-          </Link>
-        }
-      </div>
-      <div className='col-md-8 d-flex flex-column justify-content-center align-items-center align-items-md-start p-4'>
-        <Link
-          href={`${event.url}`} // ${event.uri}
-          className='noLink position-relative'
-        >
-          <div>
-            <h4 className='text-start'>{event.title}</h4>
-            {event.subtitle && <h4 className='text-start'>{event.subtitle}</h4>}
-            {event.subtitle2 && (
-              <h4 className='text-start'>{event.subtitle2}</h4>
-            )}
-            {event.subtitle3 && (
-              <h4 className='text-start'>{event.subtitle3}</h4>
-            )}
+    <article className='event-summary'>
+      <Link href={eventUrl} className='event-summary__image-link' aria-label={`View ${event.title}`}>
+        <span className='event-circle-image'>
+          <Image
+            alt={event.title}
+            src={event.featuredImage}
+            height={220}
+            width={220}
+            style={{ objectFit: 'cover', objectPosition: 'center' }}
+            quality={100}
+            className='event-circle-image__img'
+          />
+        </span>
+      </Link>
+
+      <div className='event-summary__content'>
+        <Link href={eventUrl} className='event-summary__title-link'>
+          <h2 className='event-summary__title'>{event.title}</h2>
+        </Link>
+        {event.subtitle && <p className='event-summary__subtitle'>{event.subtitle}</p>}
+        {event.displayDate && <p className='event-summary__date'>{event.displayDate}</p>}
+        {event.description?.length > 0 && (
+          <div className='event-summary__description'>
+            {event.description.slice(0, 2).map((sentence) => (
+              <p key={sentence}>{sentence}</p>
+            ))}
           </div>
+        )}
+        {event.price && (
+          <p className='event-summary__price'>
+            <span>Price:</span> {event.price}
+          </p>
+        )}
+        <Link href={eventUrl} className='event-summary__read-more'>
+          View details
         </Link>
       </div>
-    </div>
+    </article>
   )
 }
